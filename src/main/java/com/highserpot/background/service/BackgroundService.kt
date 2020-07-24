@@ -52,7 +52,6 @@ class BackgroundService : BackgroundServiceMP() {
     //mp 서비스에서 구현
     @Throws(Exception::class)
     fun image_available(): String? {
-        Thread.sleep(1000)
         var image = imageReader!!.acquireLatestImage()
         if (image != null) {
             var fos: FileOutputStream? = null
@@ -105,9 +104,17 @@ class BackgroundService : BackgroundServiceMP() {
         var run = com.highserpot.tf.tflite.Run(applicationContext, so)
         run.build(full_path)
         var res = run.get_xy(full_path)
+        rm_full_path(full_path)
 
-        //return null
+
         return res
+    }
+
+    fun rm_full_path(full_path: String) {
+        var f = File(full_path)
+        if (f.exists()) {
+            f.delete()
+        }
     }
 
 
@@ -155,7 +162,6 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (RUN_BACKGROUND) {
-                Thread.sleep(1000)
 
                 var full_path = image_available()
 

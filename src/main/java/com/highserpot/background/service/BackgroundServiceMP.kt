@@ -86,7 +86,7 @@ abstract class BackgroundServiceMP : Service() {
     fun get_virtualDisplay(): VirtualDisplay? {
         set_display()
         make_image_reader()
-        Thread.sleep(1000)
+
         var vd = mediaProjection!!.createVirtualDisplay(
             SCREENCAP_NAME,
             mWidth,
