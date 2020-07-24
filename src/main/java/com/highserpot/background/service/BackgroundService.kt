@@ -102,7 +102,7 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun tflite_run(full_path: String): FloatArray? {
         val so = getScreenOrientation()
-        var run = com.highserpot.tf.tflite.Run(this, so)
+        var run = com.highserpot.tf.tflite.Run(applicationContext, so)
         run.build(full_path)
         var res = run.get_xy(full_path)
 
