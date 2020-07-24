@@ -162,6 +162,8 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (RUN_BACKGROUND) {
+                // 터치가 안됨.
+                Thread.sleep(1000)
 
                 var full_path = image_available()
 
