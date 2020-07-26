@@ -134,12 +134,13 @@ abstract class BackgroundServiceMP : Service() {
     ) :
         OrientationEventListener(applicationContext) {
         override fun onOrientationChanged(orientation: Int) {
-            Thread.sleep(1000)
+
             val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val display = wm.defaultDisplay
             val rotation: Int = display.rotation
 
             if (mRotation != rotation) {
+                Thread.sleep(1000)
                 if (virtualDisplay != null) {
                     virtualDisplay!!.release()
                 }
