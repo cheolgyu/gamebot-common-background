@@ -140,7 +140,7 @@ abstract class BackgroundServiceMP : Service() {
             val rotation: Int = display.rotation
 
             if (mRotation != rotation) {
-                Thread.sleep(1000)
+
                 if (virtualDisplay != null) {
                     virtualDisplay!!.release()
                 }
@@ -151,7 +151,7 @@ abstract class BackgroundServiceMP : Service() {
                     mProjectionStopped = false
                     virtualDisplay = get_virtualDisplay()!!
                 }
-
+                Thread.sleep(1000)
             }
 
         }
