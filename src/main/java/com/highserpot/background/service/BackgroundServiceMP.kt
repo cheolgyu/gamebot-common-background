@@ -27,7 +27,7 @@ abstract class BackgroundServiceMP : Service() {
     var RUN_BACKGROUND = false
     var my_data: Intent? = null
     var my_resultCode: Int? = null
-
+    lateinit var orientationChangeCallback: OrientationChangeCallback
     //display
     var mWidth = 0
     var mHeight = 0
@@ -76,7 +76,7 @@ abstract class BackgroundServiceMP : Service() {
         virtualDisplay = get_virtualDisplay()!!
         mProjectionStopped = false
 
-        val orientationChangeCallback = OrientationChangeCallback()
+        orientationChangeCallback = OrientationChangeCallback()
         if (orientationChangeCallback.canDetectOrientation()) {
             orientationChangeCallback.enable()
         }
@@ -175,6 +175,7 @@ abstract class BackgroundServiceMP : Service() {
 
     override fun onDestroy() {
         RUN_BACKGROUND = false
+        orientationChangeCallback.disable()
         Toast.makeText(
             this,
             applicationContext.getString(R.string.app_service_stop),
