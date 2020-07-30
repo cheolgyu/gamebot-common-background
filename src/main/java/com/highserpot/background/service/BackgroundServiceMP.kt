@@ -140,6 +140,11 @@ abstract class BackgroundServiceMP : Service() {
             val rotation: Int = display.rotation
 
             if (mRotation != rotation) {
+                Toast.makeText(
+                    applicationContext,
+                    applicationContext.getString(R.string.app_orientation_changed_start),
+                    Toast.LENGTH_SHORT
+                ).show()
 
                 if (virtualDisplay != null) {
                     virtualDisplay!!.release()
@@ -152,6 +157,11 @@ abstract class BackgroundServiceMP : Service() {
                     virtualDisplay = get_virtualDisplay()!!
                 }
                 Thread.sleep(1000)
+                Toast.makeText(
+                    applicationContext,
+                    applicationContext.getString(R.string.app_orientation_changed_stop),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         }

@@ -22,28 +22,31 @@ class BackgroundService : BackgroundServiceMP() {
     var my_action: String? = null
 
     override fun onCreate() {
+        Log.e("오류==", "onCreate============")
         run_notify()
         ready_media()
     }
 
     @Throws(java.lang.Exception::class)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent != null) {
+            RUN_BACKGROUND = true
+            my_resultCode = intent?.getIntExtra("resultCode", 1000)
+            my_data = intent?.getParcelableExtra("data")
 
-        RUN_BACKGROUND = true
-        my_resultCode = intent!!.getIntExtra("resultCode", 1000)
-        my_data = intent.getParcelableExtra("data")
+            createVirtualDisplay()
 
-        createVirtualDisplay()
+            // start capture handling thread
+            mBackgroundThread = BackgroundThread()
+            mBackgroundThread!!.start()
 
-        // start capture handling thread
-        mBackgroundThread = BackgroundThread()
-        mBackgroundThread!!.start()
+            Toast.makeText(
+                this,
+                applicationContext.getString(R.string.app_service_start),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
-        Toast.makeText(
-            this,
-            applicationContext.getString(R.string.app_service_start),
-            Toast.LENGTH_SHORT
-        ).show()
 
         // If we get killed, after returning from here, restart
         return START_STICKY
