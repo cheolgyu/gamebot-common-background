@@ -8,14 +8,17 @@ import android.util.Log
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
+import com.highserpot.tf.tflite.Classifier
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
+import java.util.ArrayList
 
 
 class BackgroundService : BackgroundServiceMP() {
 
     var STORE_DIRECTORY: String? = null
+    var reqMode = "q"
     var mBackgroundThread: BackgroundThread? = null
     private val FOREGROUND_SERVICE_ID = 1000
     val TAG: String = "BackgroundService"
