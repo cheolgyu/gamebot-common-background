@@ -168,20 +168,19 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (RUN_BACKGROUND) {
-                // 터치가 안됨.
-
 
                 var full_path = image_available()
 
                 if (full_path != null && full_path != "") {
 
                     var arr: FloatArray? = tflite_run(full_path)
+
                     Thread.sleep(100)
                     if (arr != null) {
                         var x = arr.get(0)
                         var y = arr.get(1)
 
-                        touchService!!.click(x, y)
+                        touchService.click(x, y)
                     } else {
 
                     }

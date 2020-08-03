@@ -6,7 +6,7 @@ import android.accessibilityservice.GestureDescription.StrokeDescription
 import android.graphics.Path
 import android.view.accessibility.AccessibilityEvent
 
-var touchService: TouchService? = null
+lateinit var touchService: TouchService
 
 class TouchService : AccessibilityService() {
     override fun onServiceConnected() {
