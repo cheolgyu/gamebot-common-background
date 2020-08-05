@@ -82,11 +82,11 @@ class BackgroundService : BackgroundServiceMP() {
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
-                    buttonView.setText("실행")
+                    buttonView.setText(applicationContext.getString(R.string.over_start_txt))
                     start_thread()
                 } else {
                     buttonView.setTextColor(Color.BLACK)
-                    buttonView.setText("정지")
+                    buttonView.setText(applicationContext.getString(R.string.over_stop_txt))
                     stop_thread()
                 }
             }
