@@ -6,11 +6,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.media.Image
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.CompoundButton
+import android.widget.Switch
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
@@ -32,6 +35,7 @@ class BackgroundService : BackgroundServiceMP() {
     var prevX = 0f
     var prevY = 0f
     lateinit var window_params: WindowManager.LayoutParams
+    lateinit var btn_switch: Switch
 
     override fun onCreate() {
         Log.e("오류==", "onCreate============")
@@ -70,12 +74,8 @@ class BackgroundService : BackgroundServiceMP() {
                 return move(arg0!!, arg1!!)
             }
         })
-        val closeBtn: Button = onTopView.findViewById(R.id.close_this_window)
-        closeBtn.setOnClickListener(View.OnClickListener {
-            manager.removeView(onTopView)
-
-            stopSelf()
-        })
+        btn_switch = onTopView.findViewById(R.id.btn_switch)
+        btn_switch.setOnCheckedChangeListener(SwitchListener());
     }
 
 
@@ -269,36 +269,21 @@ class BackgroundService : BackgroundServiceMP() {
             manager.updateViewLayout(onTopView, window_params)
         }
     }
-//
-//    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
-//        val display = manager.defaultDisplay
-//        val size = Point()
-//        display.getSize(size)
-//
-//        val action: Int = motionEvent.getAction()
-//        val pointerCount: Int = motionEvent.getPointerCount()
-//        when (action) {
-//            MotionEvent.ACTION_DOWN -> if (pointerCount == 1) {
-//                xpos = motionEvent.getRawX()
-//                ypos = motionEvent.getRawY()
-//            }
-//            MotionEvent.ACTION_MOVE -> if (pointerCount == 1) {
-//                val lp =
-//                    view.getLayoutParams()
-//                val dx: Float = xpos - motionEvent.getRawX()
-//                val dy: Float = ypos - motionEvent.getRawY()
-//                xpos = motionEvent.getRawX()
-//                ypos = motionEvent.getRawY()
-//
-//                lp.width = (lp.width - dx).toInt()
-//                lp.height = (lp.height - dy).toInt()
-//                manager.updateViewLayout(view, lp)
-//                return true
-//            }
-//        }
-//        return false
-//    }
 
+    internal class SwitchListener : CompoundButton.OnCheckedChangeListener {
+        override fun onCheckedChanged(
+            buttonView: CompoundButton,
+            isChecked: Boolean
+        ) {
+            if (isChecked) {
+                buttonView.setTextColor(Color.BLUE)
+                buttonView.setText("실행")
+            } else {
+                buttonView.setTextColor(Color.BLACK)
+                buttonView.setText("정지")
+            }
+        }
+    }
 
 }
 
