@@ -2,6 +2,8 @@
     <string name="app_name">스톤에이지 하자</string>
     <string name="app_service">스톤에이지 하자 서비스</string>
     <string name="app_service_start">스톤에이지 하자 서비스가 시작되었습니다.</string>
+    <string name="app_service_thread_stop">정지되었습니다.</string>
+    <string name="app_service_thread_start">시작되었습니다.</string>
     <string name="app_service_stop">스톤에이지 하자 서비스가 종료되었습니다.</string>
     <string name="channel_name">스톤에이지 하자</string>
     <string name="channel_description">스톤에이지 하자</string>

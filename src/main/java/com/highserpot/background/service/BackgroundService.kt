@@ -75,28 +75,57 @@ class BackgroundService : BackgroundServiceMP() {
             }
         })
         btn_switch = onTopView.findViewById(R.id.btn_switch)
-        btn_switch.setOnCheckedChangeListener(SwitchListener());
+        btn_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(
+                buttonView: CompoundButton,
+                isChecked: Boolean
+            ) {
+                if (isChecked) {
+                    buttonView.setTextColor(Color.BLUE)
+                    buttonView.setText("실행")
+                    start_thread()
+                } else {
+                    buttonView.setTextColor(Color.BLACK)
+                    buttonView.setText("정지")
+                    stop_thread()
+                }
+            }
+        });
+    }
+
+    fun start_thread(){
+        RUN_BACKGROUND = true
+        // start capture handling thread
+        mBackgroundThread = BackgroundThread()
+        mBackgroundThread!!.start()
+
+        Toast.makeText(
+            this,
+            applicationContext.getString(R.string.app_service_thread_start),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+    fun stop_thread(){
+        RUN_BACKGROUND = false
+        Toast.makeText(
+            this,
+            applicationContext.getString(R.string.app_service_thread_stop),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 
     @Throws(java.lang.Exception::class)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            RUN_BACKGROUND = true
+
             my_resultCode = intent?.getIntExtra("resultCode", 1000)
             my_data = intent?.getParcelableExtra("data")
 
             createVirtualDisplay()
+           // start_thread()
+            btn_switch.isChecked = true
 
-            // start capture handling thread
-            mBackgroundThread = BackgroundThread()
-            mBackgroundThread!!.start()
-
-            Toast.makeText(
-                this,
-                applicationContext.getString(R.string.app_service_start),
-                Toast.LENGTH_SHORT
-            ).show()
         }
 
 
@@ -269,21 +298,5 @@ class BackgroundService : BackgroundServiceMP() {
             manager.updateViewLayout(onTopView, window_params)
         }
     }
-
-    internal class SwitchListener : CompoundButton.OnCheckedChangeListener {
-        override fun onCheckedChanged(
-            buttonView: CompoundButton,
-            isChecked: Boolean
-        ) {
-            if (isChecked) {
-                buttonView.setTextColor(Color.BLUE)
-                buttonView.setText("실행")
-            } else {
-                buttonView.setTextColor(Color.BLACK)
-                buttonView.setText("정지")
-            }
-        }
-    }
-
 }
 
