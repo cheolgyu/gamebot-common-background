@@ -1,18 +1,22 @@
 package com.highserpot.background.service
 
 //import com.example.tf.tflite.Run
+
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.PixelFormat
 import android.media.Image
 import android.util.Log
+import android.view.*
+import android.widget.Button
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
-import com.highserpot.tf.tflite.Classifier
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
-import java.util.ArrayList
 
 
 class BackgroundService : BackgroundServiceMP() {
@@ -23,12 +27,57 @@ class BackgroundService : BackgroundServiceMP() {
     private val FOREGROUND_SERVICE_ID = 1000
     val TAG: String = "BackgroundService"
     var my_action: String? = null
+    lateinit var onTopView: View
+    lateinit var manager: WindowManager
+    var prevX = 0f
+    var prevY = 0f
+    lateinit var window_params: WindowManager.LayoutParams
 
     override fun onCreate() {
         Log.e("오류==", "onCreate============")
         run_notify()
         ready_media()
+        top_view()
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Throws(java.lang.Exception::class)
+    fun top_view() {
+
+        val inflater =
+            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
+        // onTopView!!.setOnTouchListener(this)
+
+        window_params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+            PixelFormat.TRANSLUCENT
+        )
+
+        window_params.gravity = Gravity.LEFT or Gravity.TOP
+
+        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        manager.addView(onTopView, window_params)
+
+        //val btn_move: Button = onTopView.findViewById(R.id.btn_move)
+        onTopView.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
+                return move(arg0!!, arg1!!)
+            }
+        })
+        val closeBtn: Button = onTopView.findViewById(R.id.close_this_window)
+        closeBtn.setOnClickListener(View.OnClickListener {
+            manager.removeView(onTopView)
+
+            stopSelf()
+        })
+    }
+
 
     @Throws(java.lang.Exception::class)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -192,5 +241,64 @@ class BackgroundService : BackgroundServiceMP() {
 
     }
 
+    fun move(view: View, event: MotionEvent): Boolean {
+        when (event.getAction()) {
+            MotionEvent.ACTION_DOWN -> {
+                prevX = event.getRawX()
+                prevY = event.getRawY()
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val rawX: Float = event.getRawX() // 절대 X 좌표 값을 가져온다.
+                val rawY: Float = event.getRawY() // 절대 Y 좌표값을 가져온다.
+
+                // 이동한 위치에서 처음 위치를 빼서 이동한 거리를 구한다.
+                val x: Float = rawX - prevX
+                val y: Float = rawY - prevY
+                setCoordinateUpdate(x, y)
+                prevX = rawX
+                prevY = rawY
+            }
+        }
+        return false
+    }
+
+    private fun setCoordinateUpdate(x: Float, y: Float) {
+        if (window_params != null) {
+            window_params.x += x.toInt()
+            window_params.y += y.toInt()
+            manager.updateViewLayout(onTopView, window_params)
+        }
+    }
+//
+//    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+//        val display = manager.defaultDisplay
+//        val size = Point()
+//        display.getSize(size)
+//
+//        val action: Int = motionEvent.getAction()
+//        val pointerCount: Int = motionEvent.getPointerCount()
+//        when (action) {
+//            MotionEvent.ACTION_DOWN -> if (pointerCount == 1) {
+//                xpos = motionEvent.getRawX()
+//                ypos = motionEvent.getRawY()
+//            }
+//            MotionEvent.ACTION_MOVE -> if (pointerCount == 1) {
+//                val lp =
+//                    view.getLayoutParams()
+//                val dx: Float = xpos - motionEvent.getRawX()
+//                val dy: Float = ypos - motionEvent.getRawY()
+//                xpos = motionEvent.getRawX()
+//                ypos = motionEvent.getRawY()
+//
+//                lp.width = (lp.width - dx).toInt()
+//                lp.height = (lp.height - dy).toInt()
+//                manager.updateViewLayout(view, lp)
+//                return true
+//            }
+//        }
+//        return false
+//    }
+
 
 }
+
