@@ -173,15 +173,6 @@ abstract class BackgroundServiceMP : Service() {
         TODO("Not yet implemented")
     }
 
-    override fun onDestroy() {
-        RUN_BACKGROUND = false
-        orientationChangeCallback.disable()
-        Toast.makeText(
-            this,
-            applicationContext.getString(R.string.app_service_stop),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 
 }
 

@@ -93,6 +93,13 @@ class BackgroundService : BackgroundServiceMP() {
         });
     }
 
+    fun start(){
+        btn_switch.isChecked = true
+    }
+
+    fun stop(){
+        btn_switch.isChecked = false
+    }
     fun start_thread(){
         RUN_BACKGROUND = true
         // start capture handling thread
@@ -124,7 +131,7 @@ class BackgroundService : BackgroundServiceMP() {
 
             createVirtualDisplay()
            // start_thread()
-            btn_switch.isChecked = true
+            start()
 
         }
 
@@ -297,6 +304,18 @@ class BackgroundService : BackgroundServiceMP() {
             window_params.y += y.toInt()
             manager.updateViewLayout(onTopView, window_params)
         }
+    }
+
+
+    override fun onDestroy() {
+        stop()
+        manager.removeView(onTopView)
+        orientationChangeCallback.disable()
+        Toast.makeText(
+            this,
+            applicationContext.getString(R.string.app_service_stop),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
 
