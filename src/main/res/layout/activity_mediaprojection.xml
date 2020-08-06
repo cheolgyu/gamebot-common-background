@@ -45,11 +45,12 @@
     <fragment
         android:id="@+id/fragment2"
         android:name="com.highserpot.myad.BannerFragment"
-        android:layout_width="495dp"
-        android:layout_height="96dp"
+        android:layout_width="420dp"
+        android:layout_height="93dp"
+        android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="7dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
