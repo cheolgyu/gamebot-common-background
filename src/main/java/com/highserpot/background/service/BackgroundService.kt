@@ -9,9 +9,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.media.Image
+import android.os.Build
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.Switch
 import android.widget.Toast
@@ -47,7 +47,12 @@ class BackgroundService : BackgroundServiceMP() {
     @SuppressLint("ClickableViewAccessibility")
     @Throws(java.lang.Exception::class)
     fun top_view() {
-
+        val LAYOUT_FLAG: Int
+        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
         val inflater =
             getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
@@ -56,7 +61,7 @@ class BackgroundService : BackgroundServiceMP() {
         window_params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
