@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="service_start_btn"
         android:text="@string/start_txt"
@@ -16,13 +16,23 @@
 
     <Button
         android:id="@+id/stop_btn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
         android:onClick="service_stop_btn"
         android:text="@string/exit_txt"
-        app:layout_constraintTop_toBottomOf="@+id/button2"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintStart_toEndOf="@+id/button2"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/danger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:onClick="danger_click"
+        android:text="@string/danger_txt"
+        app:layout_constraintStart_toEndOf="@+id/stop_btn"
+        tools:layout_editor_absoluteY="0dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -45,8 +55,8 @@
     <fragment
         android:id="@+id/fragment2"
         android:name="com.highserpot.myad.BannerFragment"
-        android:layout_width="420dp"
-        android:layout_height="93dp"
+        android:layout_width="417dp"
+        android:layout_height="474dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

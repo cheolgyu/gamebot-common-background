@@ -11,8 +11,19 @@
     <string name="accessibility_service_description">스톤에이지 하자</string>
     <string name="start_txt">시작하기</string>
     <string name="exit_txt">종료하기</string>
+    <string name="danger_txt">경고</string>
     <string name="over_start_txt">실행</string>
     <string name="over_stop_txt">정지</string>
     <string name="app_orientation_changed_start">화면 회전시작</string>
     <string name="app_orientation_changed_stop">화면 회전시작</string>
+    <string name="dialog_title">경고</string>
+    <string name="dialog_message">이 어플은
+       머신러닝으로 버튼이미지를 학습시켜 클릭 이벤트를 발생시킵니다.
+       학습한것과 비슷한 버튼 이미지가 클릭될수 있고 그에 따른 책임을 지지 않습니다.
+
+       \n가방이나 결제 화면등 중요한 화면에서는 어플을 종료후 이용하세요.
+    </string>
+    <string name="agree">동의</string>
+    <string name="not_agree">동의 안함</string>
+    <string name="preference_file_key">welcome</string>
 </resources>

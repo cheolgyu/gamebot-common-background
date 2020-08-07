@@ -1,8 +1,11 @@
 package com.highserpot.background
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
@@ -21,21 +24,22 @@ open class MediaProjectionActivity : AppCompatActivity() {
     var bg: BackgroundService? = null
     var mIntent: Intent? = null
     var REQ_CODE_OVERLAY_PERMISSION = 1
+
     override fun onResume() {
         super.onResume()
         bg = BackgroundService()
         mIntent = Intent(applicationContext, BackgroundService::class.java)
+
         if (CheckTouch(this).chk()) {
-            textView2.setText(msg_y)
+            textView2.text = msg_y
         } else {
-            textView2.setText(msg_n)
+            textView2.text = msg_n
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mediaprojection)
-        //textView2.setText(msg)
 
         val action = intent.extras?.getString("action")
         if (action != null && action == "stop") {
@@ -56,13 +60,13 @@ open class MediaProjectionActivity : AppCompatActivity() {
         )
         if (Settings.canDrawOverlays(applicationContext)) {
             if (CheckTouch(this).chk()) {
-                textView2.setText(msg_y)
+                textView2.text = msg_y
                 var mediaProjectionManager =
                     getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
                 startActivityForResult(captureIntent, 1000)
             } else {
-                textView2.setText(msg_n)
+                textView2.text = msg_n
                 Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
 
             }
@@ -88,5 +92,9 @@ open class MediaProjectionActivity : AppCompatActivity() {
             Uri.parse("package:$packageName")
         )
         startActivityForResult(intent, REQ_CODE_OVERLAY_PERMISSION)
+    }
+
+    fun danger_click(view: View?) {
+        CheckTouch(this).alert_dialog()
     }
 }
