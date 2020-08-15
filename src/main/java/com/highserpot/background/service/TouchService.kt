@@ -18,7 +18,7 @@ class TouchService : AccessibilityService() {
         val clickPath = Path()
         clickPath.moveTo(x, y)
         val gestureBuilder = GestureDescription.Builder()
-        gestureBuilder.addStroke(StrokeDescription(clickPath, 0, 300))
+        gestureBuilder.addStroke(StrokeDescription(clickPath, 0, 100))
         dispatchGesture(gestureBuilder.build(), null, null)
     }
 
