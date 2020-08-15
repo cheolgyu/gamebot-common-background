@@ -1,6 +1,5 @@
 package com.highserpot.background.service
 
-//import com.example.tf.tflite.Run
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,6 +16,8 @@ import android.widget.Switch
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
+import com.highserpot.yolov4.BuildConfig
+import com.highserpot.yolov4.Run
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -197,10 +198,13 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun tflite_run(full_path: String): FloatArray? {
         val so = getScreenOrientation()
-        var run = com.highserpot.tf.tflite.Run(applicationContext, so)
+        var run = Run(applicationContext, so)
         run.build(full_path)
         var res = run.get_xy(full_path)
-        rm_full_path(full_path)
+        if (!BuildConfig.DEBUG){
+            rm_full_path(full_path)
+        }
+
 
 
         return res
