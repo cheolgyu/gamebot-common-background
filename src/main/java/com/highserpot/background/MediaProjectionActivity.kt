@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.highserpot.background.service.BackgroundService
+import com.highserpot.myad.Reward
 import kotlinx.android.synthetic.main.activity_mediaprojection.*
 
 
@@ -24,6 +25,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
     var bg: BackgroundService? = null
     var mIntent: Intent? = null
     var REQ_CODE_OVERLAY_PERMISSION = 1
+     var reward:Reward = Reward(this)
 
     override fun onResume() {
         super.onResume()
@@ -40,6 +42,8 @@ open class MediaProjectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mediaprojection)
+        reward.ready()
+
 
         val action = intent.extras?.getString("action")
         if (action != null && action == "stop") {
@@ -54,25 +58,30 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     fun service_start_btn(view: View?) {
-        Log.e(
-            "Settings.canDrawOverlays(applicationContext)",
-            Settings.canDrawOverlays(applicationContext).toString()
-        )
-        if (Settings.canDrawOverlays(applicationContext)) {
-            if (CheckTouch(this).chk()) {
-                textView2.text = msg_y
-                var mediaProjectionManager =
-                    getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
-                startActivityForResult(captureIntent, 1000)
-            } else {
-                textView2.text = msg_n
-                Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
+        if (start_reward()){
+            Log.e(
+                "Settings.canDrawOverlays(applicationContext)",
+                Settings.canDrawOverlays(applicationContext).toString()
+            )
+            if (Settings.canDrawOverlays(applicationContext)) {
+                if (CheckTouch(this).chk()) {
+                    textView2.text = msg_y
+                    var mediaProjectionManager =
+                        getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                    var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
+                    startActivityForResult(captureIntent, 1000)
+                } else {
+                    textView2.text = msg_n
+                    Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
 
+                }
+            } else {
+                onObtainingPermissionOverlayWindow()
             }
-        } else {
-            onObtainingPermissionOverlayWindow()
+        }else{
+
         }
+
 
 
     }
@@ -96,5 +105,10 @@ open class MediaProjectionActivity : AppCompatActivity() {
 
     fun danger_click(view: View?) {
         CheckTouch(this).alert_dialog()
+    }
+
+    fun start_reward(): Boolean {
+        reward.load()
+        return reward.has_reward
     }
 }
