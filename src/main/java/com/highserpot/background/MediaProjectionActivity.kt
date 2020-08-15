@@ -58,31 +58,25 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     fun service_start_btn(view: View?) {
-        if (start_reward()){
-            Log.e(
-                "Settings.canDrawOverlays(applicationContext)",
-                Settings.canDrawOverlays(applicationContext).toString()
-            )
-            if (Settings.canDrawOverlays(applicationContext)) {
-                if (CheckTouch(this).chk()) {
-                    textView2.text = msg_y
-                    var mediaProjectionManager =
-                        getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                    var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
-                    startActivityForResult(captureIntent, 1000)
-                } else {
-                    textView2.text = msg_n
-                    Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
-
-                }
+        Log.e(
+            "Settings.canDrawOverlays(applicationContext)",
+            Settings.canDrawOverlays(applicationContext).toString()
+        )
+        if (Settings.canDrawOverlays(applicationContext)) {
+            if (CheckTouch(this).chk()) {
+                textView2.text = msg_y
+                var mediaProjectionManager =
+                    getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
+                startActivityForResult(captureIntent, 1000)
             } else {
-                onObtainingPermissionOverlayWindow()
+                textView2.text = msg_n
+                Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
+
             }
-        }else{
-
+        } else {
+            onObtainingPermissionOverlayWindow()
         }
-
-
 
     }
 
