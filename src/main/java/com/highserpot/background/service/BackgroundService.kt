@@ -314,6 +314,8 @@ class BackgroundService : BackgroundServiceMP() {
         stop()
         manager.removeView(onTopView)
         orientationChangeCallback.disable()
+        virtualDisplay = null
+        mediaProjection?.stop()
         Toast.makeText(
             this,
             applicationContext.getString(R.string.app_service_stop),
