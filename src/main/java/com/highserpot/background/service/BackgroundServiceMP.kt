@@ -15,12 +15,12 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 import android.view.WindowManager
 import android.widget.Toast
 import com.highserpot.background.R
+import com.highserpot.yolov4.Run
 
 
 abstract class BackgroundServiceMP : Service() {
@@ -44,6 +44,14 @@ abstract class BackgroundServiceMP : Service() {
     var mediaProjection: MediaProjection? = null
     val mediaProjectionManager: MediaProjectionManager by lazy {
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+    }
+
+    lateinit var detect_run :Run
+
+    fun createModel(){
+        val so = getScreenOrientation()
+        detect_run = Run(applicationContext, so)
+        detect_run.build(mWidth,mHeight)
     }
 
     fun getScreenOrientation(): Int {

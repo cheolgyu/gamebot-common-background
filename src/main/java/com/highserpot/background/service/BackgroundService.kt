@@ -136,7 +136,7 @@ class BackgroundService : BackgroundServiceMP() {
             my_data = intent?.getParcelableExtra("data")
 
             createVirtualDisplay()
-           // start_thread()
+            createModel()
             start()
 
         }
@@ -197,16 +197,10 @@ class BackgroundService : BackgroundServiceMP() {
 
 
     fun tflite_run(full_path: String): FloatArray? {
-        val so = getScreenOrientation()
-        var run = Run(applicationContext, so)
-        run.build(full_path)
-        var res = run.get_xy(full_path)
+        var res = detect_run.get_xy(full_path)
         if (!BuildConfig.DEBUG){
             rm_full_path(full_path)
         }
-
-
-
         return res
     }
 
