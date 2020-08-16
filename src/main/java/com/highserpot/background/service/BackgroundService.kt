@@ -257,7 +257,7 @@ class BackgroundService : BackgroundServiceMP() {
         override fun run() {
             while (RUN_BACKGROUND) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
-                Thread.sleep(1500)
+                //Thread.sleep(1500)
                 var full_path = image_available()
 
                 if (full_path != null && full_path != "") {
@@ -271,7 +271,7 @@ class BackgroundService : BackgroundServiceMP() {
 
                         touchService.click(x, y)
                         //터치후 화면 갱신하게 시간줌.
-                        Thread.sleep(300)
+                        //Thread.sleep(300)
                     } else {
 
                     }
