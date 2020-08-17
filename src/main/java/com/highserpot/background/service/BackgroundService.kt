@@ -250,6 +250,8 @@ class BackgroundService : BackgroundServiceMP() {
 
 
     fun tflite_run(full_path: String): FloatArray? {
+
+        detect_run.build(mWidth,mHeight)
         var res = detect_run.get_xy(full_path)
         if (!BuildConfig.DEBUG){
             rm_full_path(full_path)
@@ -309,6 +311,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (RUN_BACKGROUND) {
+                Log.d("쓰레드","------")
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1500)
                 var full_path = image_available()
