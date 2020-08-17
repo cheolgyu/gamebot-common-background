@@ -5,20 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.media.Image
 import android.os.Build
 import android.util.Log
 import android.view.*
-import android.widget.CompoundButton
-import android.widget.LinearLayout
-import android.widget.Switch
-import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
+import android.widget.*
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
 import com.highserpot.yolov4.BuildConfig
-import com.highserpot.yolov4.Run
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -27,11 +21,9 @@ import java.nio.ByteBuffer
 class BackgroundService : BackgroundServiceMP() {
 
     var STORE_DIRECTORY: String? = null
-    var reqMode = "q"
     var mBackgroundThread: BackgroundThread? = null
     private val FOREGROUND_SERVICE_ID = 1000
     val TAG: String = "BackgroundService"
-    var my_action: String? = null
     lateinit var onTopView: View
     lateinit var effectView:View
     lateinit var manager: WindowManager
@@ -50,15 +42,28 @@ class BackgroundService : BackgroundServiceMP() {
         effect_view()
     }
 
-    fun draw_effect(){
+    fun draw_effect(x: Float, y: Float) {
         Log.e("draw_effect","draw_effect()")
         var c = Canvas()
-        var p = Paint()
-        p.setColor(Color.BLUE)
-        c.drawCircle(100.00f,100.00f,5.0f,p)
 
+        var p = Paint()
+        var view = View(applicationContext)
+        p.setColor(Color.BLUE)
+        c.drawCircle(x,y,5.0f,p)
+       // effectView.invalidate()
+       // effectView.draw(c)
+        view.draw(c)
+        var iv = ImageView(effectView.context)
+        iv.setImageResource(R.mipmap.ic_launcher_round)
+        //effectView.invalidate()
+        var ll = effectView as LinearLayout
+        ll.addView(iv)
+        ll.addView(view)
+        effectView.setBackgroundColor(Color.RED)
         effectView.draw(c)
-        manager.updateViewLayout(effectView, window_params_effect)
+
+
+      //  manager.updateViewLayout(effectView, window_params_effect)
     }
 
     fun effect_view(){
@@ -70,9 +75,10 @@ class BackgroundService : BackgroundServiceMP() {
         }
         val inflater =
             getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        //effectView = inflater.inflate(R.layout.effect_layout, null)
-        effectView = View(applicationContext)
+        effectView = inflater.inflate(R.layout.effect_layout, null)
+        //effectView = View(applicationContext)
         effectView.setBackgroundColor(Color.BLACK)
+
         window_params_effect = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -123,7 +129,7 @@ class BackgroundService : BackgroundServiceMP() {
         //val btn_move: Button = onTopView.findViewById(R.id.btn_move)
         onTopView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
-                draw_effect()
+
                 return move(arg0!!, arg1!!)
             }
         })
@@ -136,7 +142,7 @@ class BackgroundService : BackgroundServiceMP() {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
                     buttonView.setText(applicationContext.getString(R.string.over_start_txt))
-                    //start_thread()
+                    start_thread()
                 } else {
                     buttonView.setTextColor(Color.BLACK)
                     buttonView.setText(applicationContext.getString(R.string.over_stop_txt))
@@ -317,6 +323,7 @@ class BackgroundService : BackgroundServiceMP() {
                         var y = arr.get(1)
 
                         touchService.click(x, y)
+                        draw_effect(x,y)
                         //터치후 화면 갱신하게 시간줌.
                         //Thread.sleep(300)
                     } else {
