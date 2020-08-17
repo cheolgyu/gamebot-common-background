@@ -4,16 +4,17 @@ package com.highserpot.background.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.PixelFormat
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.media.Image
 import android.os.Build
 import android.util.Log
 import android.view.*
 import android.widget.CompoundButton
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
 import com.highserpot.yolov4.BuildConfig
@@ -32,10 +33,13 @@ class BackgroundService : BackgroundServiceMP() {
     val TAG: String = "BackgroundService"
     var my_action: String? = null
     lateinit var onTopView: View
+    lateinit var effectView:View
     lateinit var manager: WindowManager
     var prevX = 0f
     var prevY = 0f
     lateinit var window_params: WindowManager.LayoutParams
+    lateinit var window_params_effect: WindowManager.LayoutParams
+
     lateinit var btn_switch: Switch
 
     override fun onCreate() {
@@ -43,6 +47,48 @@ class BackgroundService : BackgroundServiceMP() {
         run_notify()
         ready_media()
         top_view()
+        effect_view()
+    }
+
+    fun draw_effect(){
+        Log.e("draw_effect","draw_effect()")
+        var c = Canvas()
+        var p = Paint()
+        p.setColor(Color.BLUE)
+        c.drawCircle(100.00f,100.00f,5.0f,p)
+
+        effectView.draw(c)
+        manager.updateViewLayout(effectView, window_params_effect)
+    }
+
+    fun effect_view(){
+        val LAYOUT_FLAG: Int
+        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+        val inflater =
+            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        //effectView = inflater.inflate(R.layout.effect_layout, null)
+        effectView = View(applicationContext)
+        effectView.setBackgroundColor(Color.BLACK)
+        window_params_effect = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            LAYOUT_FLAG,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            PixelFormat.TRANSLUCENT
+        )
+
+        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
+
+        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        manager.addView(effectView, window_params_effect)
+
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -77,6 +123,7 @@ class BackgroundService : BackgroundServiceMP() {
         //val btn_move: Button = onTopView.findViewById(R.id.btn_move)
         onTopView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
+                draw_effect()
                 return move(arg0!!, arg1!!)
             }
         })
@@ -89,7 +136,7 @@ class BackgroundService : BackgroundServiceMP() {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
                     buttonView.setText(applicationContext.getString(R.string.over_start_txt))
-                    start_thread()
+                    //start_thread()
                 } else {
                     buttonView.setTextColor(Color.BLACK)
                     buttonView.setText(applicationContext.getString(R.string.over_stop_txt))
