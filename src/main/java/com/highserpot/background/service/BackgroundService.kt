@@ -4,12 +4,17 @@ package com.highserpot.background.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PixelFormat
 import android.media.Image
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.core.view.marginTop
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
 import com.highserpot.yolov4.BuildConfig
@@ -25,17 +30,17 @@ class BackgroundService : BackgroundServiceMP() {
     private val FOREGROUND_SERVICE_ID = 1000
     val TAG: String = "BackgroundService"
     lateinit var onTopView: View
-    lateinit var effectView:View
+    lateinit var effectView: View
     lateinit var manager: WindowManager
     var prevX = 0f
     var prevY = 0f
     lateinit var window_params: WindowManager.LayoutParams
     lateinit var window_params_effect: WindowManager.LayoutParams
+    lateinit var imageView: ImageView
 
     lateinit var btn_switch: Switch
 
     override fun onCreate() {
-        Log.e("오류==", "onCreate============")
         run_notify()
         ready_media()
         top_view()
@@ -43,30 +48,21 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun draw_effect(x: Float, y: Float) {
-        Log.e("draw_effect","draw_effect()")
-        var c = Canvas()
-
-        var p = Paint()
-        var view = View(applicationContext)
-        p.setColor(Color.BLUE)
-        c.drawCircle(x,y,5.0f,p)
-       // effectView.invalidate()
-       // effectView.draw(c)
-        view.draw(c)
-        var iv = ImageView(effectView.context)
-        iv.setImageResource(R.mipmap.ic_launcher_round)
-        //effectView.invalidate()
-        var ll = effectView as LinearLayout
-        ll.addView(iv)
-        ll.addView(view)
-        effectView.setBackgroundColor(Color.RED)
-        effectView.draw(c)
-
-
-      //  manager.updateViewLayout(effectView, window_params_effect)
+        val view = (imageView as View)
+        view.x = x - (imageView.width / 2)
+        view.y = y - (imageView.height / 2)
     }
 
-    fun effect_view(){
+    fun set_effect() {
+        imageView = ImageView(effectView.context)
+        imageView.setImageResource(R.mipmap.ic_launcher_round)
+
+        (effectView as LinearLayout).addView(imageView)
+        effectView.setBackgroundColor(Color.TRANSPARENT)
+    }
+
+    fun effect_view() {
+
         val LAYOUT_FLAG: Int
         LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -76,12 +72,11 @@ class BackgroundService : BackgroundServiceMP() {
         val inflater =
             getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         effectView = inflater.inflate(R.layout.effect_layout, null)
-        //effectView = View(applicationContext)
-        effectView.setBackgroundColor(Color.BLACK)
+        set_effect()
 
         window_params_effect = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
@@ -93,7 +88,6 @@ class BackgroundService : BackgroundServiceMP() {
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(effectView, window_params_effect)
-
 
     }
 
@@ -130,7 +124,7 @@ class BackgroundService : BackgroundServiceMP() {
         onTopView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
 
-                return move(arg0!!, arg1!!)
+                return move(arg0!!, arg1)
             }
         })
         btn_switch = onTopView.findViewById(R.id.btn_switch)
@@ -141,25 +135,28 @@ class BackgroundService : BackgroundServiceMP() {
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
-                    buttonView.setText(applicationContext.getString(R.string.over_start_txt))
+                    buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     start_thread()
+                    (imageView as View).visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
-                    buttonView.setText(applicationContext.getString(R.string.over_stop_txt))
+                    buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     stop_thread()
+                    (imageView as View).visibility  = View.INVISIBLE
                 }
             }
-        });
+        })
     }
 
-    fun start(){
+    fun start() {
         btn_switch.isChecked = true
     }
 
-    fun stop(){
+    fun stop() {
         btn_switch.isChecked = false
     }
-    fun start_thread(){
+
+    fun start_thread() {
         RUN_BACKGROUND = true
         // start capture handling thread
         mBackgroundThread = BackgroundThread()
@@ -171,7 +168,8 @@ class BackgroundService : BackgroundServiceMP() {
             Toast.LENGTH_SHORT
         ).show()
     }
-    fun stop_thread(){
+
+    fun stop_thread() {
         RUN_BACKGROUND = false
         Toast.makeText(
             this,
@@ -185,8 +183,8 @@ class BackgroundService : BackgroundServiceMP() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
 
-            my_resultCode = intent?.getIntExtra("resultCode", 1000)
-            my_data = intent?.getParcelableExtra("data")
+            my_resultCode = intent.getIntExtra("resultCode", 1000)
+            my_data = intent.getParcelableExtra("data")
 
             createVirtualDisplay()
             createModel()
@@ -194,12 +192,10 @@ class BackgroundService : BackgroundServiceMP() {
 
         }
 
-
         // If we get killed, after returning from here, restart
         return START_STICKY
     }
 
-    //mp 서비스에서 구현
     @Throws(Exception::class)
     fun image_available(): String? {
         var image = imageReader!!.acquireLatestImage()
@@ -248,12 +244,11 @@ class BackgroundService : BackgroundServiceMP() {
         return null
     }
 
-
     fun tflite_run(full_path: String): FloatArray? {
 
-        detect_run.build(mWidth,mHeight)
+        detect_run.build(mWidth, mHeight)
         var res = detect_run.get_xy(full_path)
-        if (!BuildConfig.DEBUG){
+        if (!BuildConfig.DEBUG) {
             rm_full_path(full_path)
         }
         return res
@@ -265,7 +260,6 @@ class BackgroundService : BackgroundServiceMP() {
             f.delete()
         }
     }
-
 
     fun run_notify() {
         var noti = Noti(this)
@@ -311,7 +305,6 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (RUN_BACKGROUND) {
-                Log.d("쓰레드","------")
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1500)
                 var full_path = image_available()
@@ -322,11 +315,14 @@ class BackgroundService : BackgroundServiceMP() {
 
 
                     if (arr != null) {
-                        var x = arr.get(0)
-                        var y = arr.get(1)
+                        val x = arr.get(0)
+                        val y = arr.get(1)
 
                         touchService.click(x, y)
-                        draw_effect(x,y)
+                        Handler(Looper.getMainLooper()).post(Runnable {
+                            draw_effect(x, y)
+                        })
+
                         //터치후 화면 갱신하게 시간줌.
                         //Thread.sleep(300)
                     } else {
@@ -341,14 +337,14 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun move(view: View, event: MotionEvent): Boolean {
-        when (event.getAction()) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                prevX = event.getRawX()
-                prevY = event.getRawY()
+                prevX = event.rawX
+                prevY = event.rawY
             }
             MotionEvent.ACTION_MOVE -> {
-                val rawX: Float = event.getRawX() // 절대 X 좌표 값을 가져온다.
-                val rawY: Float = event.getRawY() // 절대 Y 좌표값을 가져온다.
+                val rawX: Float = event.rawX // 절대 X 좌표 값을 가져온다.
+                val rawY: Float = event.rawY // 절대 Y 좌표값을 가져온다.
 
                 // 이동한 위치에서 처음 위치를 빼서 이동한 거리를 구한다.
                 val x: Float = rawX - prevX
@@ -373,6 +369,7 @@ class BackgroundService : BackgroundServiceMP() {
     override fun onDestroy() {
         stop()
         manager.removeView(onTopView)
+        manager.removeView(effectView)
         orientationChangeCallback.disable()
         virtualDisplay = null
         mediaProjection?.stop()
