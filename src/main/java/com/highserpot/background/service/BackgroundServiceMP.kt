@@ -51,7 +51,7 @@ abstract class BackgroundServiceMP : Service() {
     fun createModel(){
         val so = getScreenOrientation()
         detect_run = Run(applicationContext, so)
-        detect_run.build(mWidth,mHeight)
+        detect_run.init()
     }
 
     fun getScreenOrientation(): Int {
