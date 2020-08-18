@@ -14,6 +14,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.marginTop
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
@@ -54,9 +55,9 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun set_effect() {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         imageView = ImageView(effectView.context)
-        imageView.setImageResource(R.mipmap.ic_launcher_round)
-
+        imageView.setImageResource(R.drawable.ic_baseline_pets_24)
         (effectView as LinearLayout).addView(imageView)
         effectView.setBackgroundColor(Color.TRANSPARENT)
     }
@@ -142,7 +143,7 @@ class BackgroundService : BackgroundServiceMP() {
                     buttonView.setTextColor(Color.BLACK)
                     buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     stop_thread()
-                    (imageView as View).visibility  = View.INVISIBLE
+                    (imageView as View).visibility = View.INVISIBLE
                 }
             }
         })
