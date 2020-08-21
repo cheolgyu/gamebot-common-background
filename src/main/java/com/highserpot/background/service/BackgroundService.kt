@@ -232,7 +232,7 @@ class BackgroundService : BackgroundServiceMP() {
 
             // write bitmap to a file
             val file_id = System.currentTimeMillis()
-            var my_file = STORE_DIRECTORY + file_id + ".JPEG"
+            var my_file = STORE_DIRECTORY + file_id + ".jpg"
             fos =
                 FileOutputStream(my_file)
             bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fos)
