@@ -11,6 +11,7 @@ import android.media.Image
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -308,12 +309,14 @@ class BackgroundService : BackgroundServiceMP() {
             while (RUN_BACKGROUND) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1500)
+                val  startTime = SystemClock.uptimeMillis()
                 var full_path = image_available()
 
                 if (full_path != null && full_path != "") {
 
                     var arr: FloatArray? = tflite_run(full_path)
-
+                    var lastProcessingTimeMs = SystemClock.uptimeMillis()-startTime
+                    Log.d("예측-시간","Inference time: " + lastProcessingTimeMs + "ms")
 
                     if (arr != null) {
                         val x = arr.get(0)
