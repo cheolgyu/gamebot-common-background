@@ -1,17 +1,13 @@
 package com.highserpot.background
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +22,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
     var bg: BackgroundService? = null
     var mIntent: Intent? = null
     var REQ_CODE_OVERLAY_PERMISSION = 1
-     var reward:Reward = Reward(this)
+    var reward: Reward = Reward(this)
 
     override fun onResume() {
         super.onResume()
