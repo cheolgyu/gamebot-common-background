@@ -16,10 +16,9 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.marginTop
+import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
-import com.highserpot.background.BuildConfig
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -50,9 +49,24 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun draw_effect(x: Float, y: Float) {
-        val view = (imageView as View)
+        val view = make_effect()
         view.x = x - (imageView.width / 2)
         view.y = y - (imageView.height / 2)
+        val mMyTask = Runnable {
+            (effectView as LinearLayout).removeView(view)
+        }
+        val mHandler = Handler()
+        mHandler.postDelayed(mMyTask, 500)
+
+
+
+    }
+
+    fun make_effect(): View {
+        var iv = ImageView(effectView.context)
+        iv.setImageResource(R.drawable.ic_baseline_pets_24)
+        (effectView as LinearLayout).addView(iv)
+        return iv as View
     }
 
     fun set_effect() {
