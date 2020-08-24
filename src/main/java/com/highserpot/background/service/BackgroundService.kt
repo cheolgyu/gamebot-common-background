@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.marginTop
 import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
-import com.highserpot.yolov4.BuildConfig
+import com.highserpot.background.BuildConfig
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer

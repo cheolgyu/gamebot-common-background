@@ -20,7 +20,7 @@ import android.view.Surface
 import android.view.WindowManager
 import android.widget.Toast
 import com.highserpot.background.R
-import com.highserpot.yolov4.Run
+import com.highserpot.tf.tflite.Run
 
 
 abstract class BackgroundServiceMP : Service() {
@@ -46,11 +46,11 @@ abstract class BackgroundServiceMP : Service() {
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
 
-    lateinit var detect_run :Run
+    lateinit var detect_run : Run
 
     fun createModel(){
         val so = getScreenOrientation()
-        detect_run = Run(applicationContext, so)
+        detect_run = Run(applicationContext)
         detect_run.init()
     }
 
