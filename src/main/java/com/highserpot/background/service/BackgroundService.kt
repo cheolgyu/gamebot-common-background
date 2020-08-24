@@ -71,9 +71,6 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun set_effect() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        imageView = ImageView(effectView.context)
-        imageView.setImageResource(R.drawable.ic_baseline_pets_24)
-        (effectView as LinearLayout).addView(imageView)
         effectView.setBackgroundColor(Color.TRANSPARENT)
     }
 
