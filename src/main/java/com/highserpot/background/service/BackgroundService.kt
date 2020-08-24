@@ -37,7 +37,6 @@ class BackgroundService : BackgroundServiceMP() {
     var prevY = 0f
     lateinit var window_params: WindowManager.LayoutParams
     lateinit var window_params_effect: WindowManager.LayoutParams
-    lateinit var imageView: ImageView
 
     lateinit var btn_switch: Switch
 
@@ -50,8 +49,8 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun draw_effect(x: Float, y: Float) {
         val view = make_effect()
-        view.x = x - (imageView.width / 2)
-        view.y = y - (imageView.height / 2)
+        view.x = x - (view.width / 2)
+        view.y = y - (view.height / 2)
         val mMyTask = Runnable {
             (effectView as LinearLayout).removeView(view)
         }
@@ -150,12 +149,12 @@ class BackgroundService : BackgroundServiceMP() {
                     buttonView.setTextColor(Color.BLUE)
                     buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     start_thread()
-                    (imageView as View).visibility = View.VISIBLE
+                    (effectView as View).visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
                     buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     stop_thread()
-                    (imageView as View).visibility = View.INVISIBLE
+                    (effectView as View).visibility = View.INVISIBLE
                 }
             }
         })
