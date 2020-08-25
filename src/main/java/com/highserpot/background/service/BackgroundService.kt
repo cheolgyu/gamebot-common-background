@@ -8,10 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.media.Image
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.os.*
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -21,10 +18,11 @@ import com.highserpot.background.R
 import com.highserpot.background.notification.Noti
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.NullPointerException
 import java.nio.ByteBuffer
 
 
-class BackgroundService : BackgroundServiceMP() {
+ class BackgroundService : BackgroundServiceMP() {
 
     var STORE_DIRECTORY: String? = null
     var mBackgroundThread: BackgroundThread? = null
@@ -260,6 +258,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         detect_run.build(mWidth, mHeight)
         var res = detect_run.get_xy(full_path)
+
         if (!BuildConfig.DEBUG) {
             rm_full_path(full_path)
         }
