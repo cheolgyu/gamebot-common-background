@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.hardware.display.DisplayManager
@@ -24,6 +25,7 @@ import com.highserpot.tf.tflite.Run
 
 
 abstract class BackgroundServiceMP : Service() {
+
     var RUN_BACKGROUND = false
     var my_data: Intent? = null
     var my_resultCode: Int? = null

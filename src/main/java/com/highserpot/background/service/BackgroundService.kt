@@ -4,25 +4,27 @@ package com.highserpot.background.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.PixelFormat
+import android.graphics.*
 import android.media.Image
-import android.os.*
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
+import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
+import com.highserpot.tf.tflite.Classifier
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.NullPointerException
 import java.nio.ByteBuffer
 
 
- class BackgroundService : BackgroundServiceMP() {
+class BackgroundService : BackgroundServiceMP() {
 
     var STORE_DIRECTORY: String? = null
     var mBackgroundThread: BackgroundThread? = null
@@ -30,6 +32,8 @@ import java.nio.ByteBuffer
     val TAG: String = "BackgroundService"
     lateinit var onTopView: View
     lateinit var effectView: View
+    lateinit var rectView: View
+
     lateinit var manager: WindowManager
     var prevX = 0f
     var prevY = 0f
@@ -37,12 +41,14 @@ import java.nio.ByteBuffer
     lateinit var window_params_effect: WindowManager.LayoutParams
 
     lateinit var btn_switch: Switch
+    lateinit var rectViewCanvas: Canvas
 
     override fun onCreate() {
         run_notify()
         ready_media()
-        top_view()
-        effect_view()
+        add_view_top()
+        add_view_effect()
+        add_view_rect()
     }
 
     fun draw_effect(x: Float, y: Float) {
@@ -54,9 +60,6 @@ import java.nio.ByteBuffer
         }
         val mHandler = Handler()
         mHandler.postDelayed(mMyTask, 500)
-
-
-
     }
 
     fun make_effect(): View {
@@ -69,9 +72,38 @@ import java.nio.ByteBuffer
     fun set_effect() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         effectView.setBackgroundColor(Color.TRANSPARENT)
+
     }
 
-    fun effect_view() {
+    fun add_view_rect() {
+
+        val LAYOUT_FLAG: Int
+        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+
+        rectView = RectLayout(applicationContext)
+
+        window_params_effect = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            LAYOUT_FLAG,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            PixelFormat.TRANSLUCENT
+        )
+
+        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
+
+        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        manager.addView(rectView, window_params_effect)
+
+    }
+
+    fun add_view_effect() {
 
         val LAYOUT_FLAG: Int
         LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -103,7 +135,7 @@ import java.nio.ByteBuffer
 
     @SuppressLint("ClickableViewAccessibility")
     @Throws(java.lang.Exception::class)
-    fun top_view() {
+    fun add_view_top() {
         val LAYOUT_FLAG: Int
         LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -200,6 +232,10 @@ import java.nio.ByteBuffer
             createModel()
             start()
 
+
+//            val bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888)
+//            effectViewCanvas = Canvas(bitmap)
+//            effectView.draw(effectViewCanvas)
         }
 
         // If we get killed, after returning from here, restart
@@ -257,13 +293,57 @@ import java.nio.ByteBuffer
     fun tflite_run(full_path: String): FloatArray? {
 
         detect_run.build(mWidth, mHeight)
-        var res = detect_run.get_xy(full_path)
+        var res = detect_run.get_results(full_path)
+
+        for (item in res){
+
+
+//            val strokePaint = Paint()
+//            strokePaint.setColor(Color.RED)
+//            effectViewCanvas.drawColor(Color.BLACK)
+//            effectViewCanvas.drawRect(item.getLocation(),strokePaint)
+        }
+        if (res != null && res.size >= 1){
+            val mutableListOf = mutableListOf<Classifier.Recognition>(res[0])
+            Handler(Looper.getMainLooper()).post(Runnable {
+                (rectView as RectLayout).show(mutableListOf)
+            })
+        }else{
+            Log.e("???","!!!!!!")
+        }
+
+
+
+
+
+        var c_xy :FloatArray? = null
+        if(res.isNotEmpty()){
+            c_xy = click_xy(res[0].title.toInt(),res[0].getLocation()!!)
+        }
+        Log.e("tflite_run",res.toString())
 
         if (!BuildConfig.DEBUG) {
             rm_full_path(full_path)
         }
-        return res
+        return c_xy
     }
+
+     fun click_xy(label_title: Int, item: RectF): FloatArray? {
+
+         var x = item.left + (item.right - item.left) / 2 //+ add_size[0]
+         var y = item.top + (item.bottom - item.top) / 2 //+  add_size[1]
+         var arr = FloatArray(2)
+
+         if (x < 0 || y < 0) {
+             return null
+         } else {
+             arr.set(0, x)
+             arr.set(1, y)
+         }
+
+         return arr
+     }
+
 
     fun rm_full_path(full_path: String) {
         var f = File(full_path)
@@ -331,7 +411,7 @@ import java.nio.ByteBuffer
                         val x = arr.get(0)
                         val y = arr.get(1)
 
-                        touchService.click(x, y)
+                        //touchService.click(x, y)
                         Handler(Looper.getMainLooper()).post(Runnable {
                             draw_effect(x, y)
                         })
