@@ -63,7 +63,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     fun service_start_btn(view: View?) {
-        Log.e(
+        Log.d(
             "Settings.canDrawOverlays(applicationContext)",
             Settings.canDrawOverlays(applicationContext).toString()
         )

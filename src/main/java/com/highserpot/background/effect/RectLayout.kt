@@ -1,12 +1,16 @@
 package com.highserpot.background.effect
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
 import android.os.Handler
 import android.util.AttributeSet
-import android.widget.*
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import com.highserpot.background.R
 import com.highserpot.tf.tflite.Classifier
@@ -77,8 +81,11 @@ class RectLayout @JvmOverloads constructor(
     }
 
     fun show(list: List<Classifier.Recognition>) {
+
         for (item in list) {
-            make_item(item.getLocation(),item.title)
+            val id = context.applicationContext.resources.getIdentifier("label_"+item.title, "string", context.applicationContext.packageName)
+            val lable = context.applicationContext.getString(id)
+            make_item(item.getLocation(),lable)
         }
     }
 

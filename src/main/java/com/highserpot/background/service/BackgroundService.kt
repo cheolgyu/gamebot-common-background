@@ -246,7 +246,7 @@ class BackgroundService : BackgroundServiceMP() {
         if (res.isNotEmpty()) {
             c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
         }
-        Log.e("tflite_run", res.toString())
+        Log.d("tflite_run", res.toString())
 
         if (!BuildConfig.DEBUG) {
             utils.rm_full_path(full_path)
