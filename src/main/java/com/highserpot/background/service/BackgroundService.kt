@@ -16,6 +16,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
+import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
 import com.highserpot.tf.tflite.Classifier
@@ -41,7 +42,6 @@ class BackgroundService : BackgroundServiceMP() {
     lateinit var window_params_effect: WindowManager.LayoutParams
 
     lateinit var btn_switch: Switch
-    lateinit var rectViewCanvas: Canvas
 
     override fun onCreate() {
         run_notify()
@@ -49,30 +49,6 @@ class BackgroundService : BackgroundServiceMP() {
         add_view_top()
         add_view_effect()
         add_view_rect()
-    }
-
-    fun draw_effect(x: Float, y: Float) {
-        val view = make_effect()
-        view.x = x - (view.width / 2)
-        view.y = y - (view.height / 2)
-        val mMyTask = Runnable {
-            (effectView as LinearLayout).removeView(view)
-        }
-        val mHandler = Handler()
-        mHandler.postDelayed(mMyTask, 500)
-    }
-
-    fun make_effect(): View {
-        var iv = ImageView(effectView.context)
-        iv.setImageResource(R.drawable.ic_baseline_pets_24)
-        (effectView as LinearLayout).addView(iv)
-        return iv as View
-    }
-
-    fun set_effect() {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        effectView.setBackgroundColor(Color.TRANSPARENT)
-
     }
 
     fun add_view_rect() {
@@ -96,8 +72,6 @@ class BackgroundService : BackgroundServiceMP() {
             PixelFormat.TRANSLUCENT
         )
 
-        //window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
-
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(rectView, window_params_effect)
 
@@ -111,10 +85,8 @@ class BackgroundService : BackgroundServiceMP() {
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
         }
-        val inflater =
-            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        effectView = inflater.inflate(R.layout.effect_layout, null)
-        set_effect()
+
+        effectView = PointLayout(applicationContext)
 
         window_params_effect = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -297,11 +269,6 @@ class BackgroundService : BackgroundServiceMP() {
 
         for (item in res){
 
-
-//            val strokePaint = Paint()
-//            strokePaint.setColor(Color.RED)
-//            effectViewCanvas.drawColor(Color.BLACK)
-//            effectViewCanvas.drawRect(item.getLocation(),strokePaint)
         }
         if (res != null && res.size >= 1){
             Handler(Looper.getMainLooper()).post(Runnable {
@@ -412,7 +379,7 @@ class BackgroundService : BackgroundServiceMP() {
 
                         //touchService.click(x, y)
                         Handler(Looper.getMainLooper()).post(Runnable {
-                            draw_effect(x, y)
+                            (effectView as PointLayout).draw(x, y)
                         })
 
                         //터치후 화면 갱신하게 시간줌.
