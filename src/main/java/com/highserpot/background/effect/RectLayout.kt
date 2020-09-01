@@ -8,16 +8,19 @@ import android.os.Handler
 import android.util.AttributeSet
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
+import com.highserpot.background.R
 import com.highserpot.tf.tflite.Classifier
 
 
 class RectLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr) {
+     var color : Int
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         this.setBackgroundColor(Color.TRANSPARENT)
+        color = context.applicationContext.getColor(R.color.colorPrimary)
     }
 
     val sec = 300
@@ -27,7 +30,7 @@ class RectLayout @JvmOverloads constructor(
             intrinsicWidth = ((location.right - location.left)).toInt()
             intrinsicHeight = ((location.bottom - location.top)).toInt()
             shape = RectShape()
-            paint.color = Color.BLUE
+            paint.color = color
             paint.alpha = 255
 
             paint.style = Paint.Style.STROKE
@@ -51,7 +54,7 @@ class RectLayout @JvmOverloads constructor(
             y = location.top-70f
             text = txt
             textSize = 20f
-            setTextColor(Color.BLUE)
+            setTextColor(color)
         }
 
         return label

@@ -19,7 +19,6 @@ import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
-import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
