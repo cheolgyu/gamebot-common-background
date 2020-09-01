@@ -11,25 +11,37 @@ import java.io.File
 class Utils(var context: Context) {
 
     fun get_wm_lp(wrap: Boolean): WindowManager.LayoutParams {
-        val LAYOUT_FLAG: Int
-        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        var LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
         }
-        var lp_item = WindowManager.LayoutParams.WRAP_CONTENT
-        if (!wrap) {
-            lp_item = WindowManager.LayoutParams.MATCH_PARENT
-        }
-        return WindowManager.LayoutParams(
-            lp_item,
-            lp_item,
+
+        var lp = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             PixelFormat.TRANSLUCENT
         )
+
+        if (wrap) {
+            lp = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                LAYOUT_FLAG,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+
+                PixelFormat.TRANSLUCENT
+            )
+        }
+
+
+        return lp
     }
 
     fun rm_full_path(full_path: String) {

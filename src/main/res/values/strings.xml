@@ -14,6 +14,8 @@
     <string name="danger_txt">경고</string>
     <string name="over_start_txt">실행</string>
     <string name="over_stop_txt">정지</string>
+    <string name="rect_layout_start_txt">보이기</string>
+    <string name="rect_layout_stop_txt">감추기</string>
     <string name="app_orientation_changed_start">화면 회전시작</string>
     <string name="app_orientation_changed_stop">화면 회전시작</string>
     <string name="dialog_title">경고</string>

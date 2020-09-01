@@ -19,6 +19,14 @@
         android:layout_height="wrap_content"
         android:switchPadding="20dp"
         android:text=""
-         />
+        />
+
+    <Switch
+        android:id="@+id/rect_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:switchPadding="20dp"
+        android:text=""
+        />
 
 </LinearLayout>

@@ -39,6 +39,7 @@ class BackgroundService : BackgroundServiceMP() {
     lateinit var window_params_effect: WindowManager.LayoutParams
 
     lateinit var btn_switch: Switch
+    lateinit var rect_switch: Switch
     lateinit var utils: Utils
 
     override fun onCreate() {
@@ -81,6 +82,7 @@ class BackgroundService : BackgroundServiceMP() {
         // onTopView!!.setOnTouchListener(this)
 
         window_params = utils.get_wm_lp(true)
+        window_params.flags
         window_params.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -89,7 +91,6 @@ class BackgroundService : BackgroundServiceMP() {
         //val btn_move: Button = onTopView.findViewById(R.id.btn_move)
         onTopView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
-
                 return move(arg0!!, arg1)
             }
         })
@@ -112,14 +113,34 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
         })
+
+        rect_switch = onTopView.findViewById(R.id.rect_switch)
+        rect_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(
+                buttonView: CompoundButton,
+                isChecked: Boolean
+            ) {
+                if (isChecked) {
+                    buttonView.setTextColor(Color.BLUE)
+                    buttonView.text = applicationContext.getString(R.string.rect_layout_start_txt)
+                    rectView.visibility = View.VISIBLE
+                } else {
+                    buttonView.setTextColor(Color.BLACK)
+                    buttonView.text = applicationContext.getString(R.string.rect_layout_stop_txt)
+                    rectView.visibility = View.INVISIBLE
+                }
+            }
+        })
     }
 
     fun start() {
         btn_switch.isChecked = true
+        rect_switch.isChecked = true
     }
 
     fun stop() {
         btn_switch.isChecked = false
+        rect_switch.isChecked = false
     }
 
     fun start_thread() {
@@ -215,15 +236,10 @@ class BackgroundService : BackgroundServiceMP() {
         detect_run.build(mWidth, mHeight)
         var res = detect_run.get_results(full_path)
 
-        for (item in res) {
-
-        }
-        if (res != null && res.size >= 1) {
+        if (res != null && res.size >= 1 && rectView != null && rectView.visibility == View.VISIBLE) {
             Handler(Looper.getMainLooper()).post(Runnable {
                 (rectView as RectLayout).show(res)
             })
-        } else {
-            Log.e("???", "!!!!!!")
         }
 
         var c_xy: FloatArray? = null
