@@ -51,26 +51,32 @@ class BackgroundService : BackgroundServiceMP() {
         add_view_rect()
     }
 
-    fun add_view_rect() {
-
+    fun get_wm_lp( wrap: Boolean): WindowManager.LayoutParams {
         val LAYOUT_FLAG: Int
         LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
         }
-
-        rectView = RectLayout(applicationContext)
-
-        window_params_effect = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.MATCH_PARENT,
+        var lp_item  = WindowManager.LayoutParams.WRAP_CONTENT
+        if (!wrap){
+            lp_item  = WindowManager.LayoutParams.MATCH_PARENT
+        }
+        return WindowManager.LayoutParams(
+            lp_item,
+            lp_item,
             LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             PixelFormat.TRANSLUCENT
         )
+    }
+
+    fun add_view_rect() {
+
+        rectView = RectLayout(applicationContext)
+        window_params_effect = get_wm_lp(false)
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(rectView, window_params_effect)
@@ -79,26 +85,9 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun add_view_effect() {
 
-        val LAYOUT_FLAG: Int
-        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
-
         effectView = PointLayout(applicationContext)
-
-        window_params_effect = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.MATCH_PARENT,
-            LAYOUT_FLAG,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            PixelFormat.TRANSLUCENT
-        )
-
-        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
+        window_params_effect  = get_wm_lp(false)
+        window_params_effect.gravity = Gravity.LEFT or Gravity.CENTER
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(effectView, window_params_effect)
@@ -108,27 +97,13 @@ class BackgroundService : BackgroundServiceMP() {
     @SuppressLint("ClickableViewAccessibility")
     @Throws(java.lang.Exception::class)
     fun add_view_top() {
-        val LAYOUT_FLAG: Int
-        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
+
         val inflater =
             getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
         // onTopView!!.setOnTouchListener(this)
 
-        window_params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            LAYOUT_FLAG,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-            PixelFormat.TRANSLUCENT
-        )
-
+        window_params = get_wm_lp(true)
         window_params.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -277,10 +252,6 @@ class BackgroundService : BackgroundServiceMP() {
         }else{
             Log.e("???","!!!!!!")
         }
-
-
-
-
 
         var c_xy :FloatArray? = null
         if(res.isNotEmpty()){

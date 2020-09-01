@@ -2,12 +2,9 @@ package com.highserpot.background.effect
 
 import android.content.Context
 import android.graphics.Color
-import android.media.Image
 import android.os.Handler
 import android.util.AttributeSet
-import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatDelegate
 import com.highserpot.background.R
