@@ -13,13 +13,12 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.appcompat.app.AppCompatDelegate
 import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
+import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
-import com.highserpot.tf.tflite.Classifier
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -30,7 +29,6 @@ class BackgroundService : BackgroundServiceMP() {
     var STORE_DIRECTORY: String? = null
     var mBackgroundThread: BackgroundThread? = null
     private val FOREGROUND_SERVICE_ID = 1000
-    val TAG: String = "BackgroundService"
     lateinit var onTopView: View
     lateinit var effectView: View
     lateinit var rectView: View
@@ -42,8 +40,10 @@ class BackgroundService : BackgroundServiceMP() {
     lateinit var window_params_effect: WindowManager.LayoutParams
 
     lateinit var btn_switch: Switch
+    lateinit var utils: Utils
 
     override fun onCreate() {
+        utils = Utils(this.applicationContext)
         run_notify()
         ready_media()
         add_view_top()
@@ -51,16 +51,16 @@ class BackgroundService : BackgroundServiceMP() {
         add_view_rect()
     }
 
-    fun get_wm_lp( wrap: Boolean): WindowManager.LayoutParams {
+    fun get_wm_lp(wrap: Boolean): WindowManager.LayoutParams {
         val LAYOUT_FLAG: Int
         LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_PHONE
         }
-        var lp_item  = WindowManager.LayoutParams.WRAP_CONTENT
-        if (!wrap){
-            lp_item  = WindowManager.LayoutParams.MATCH_PARENT
+        var lp_item = WindowManager.LayoutParams.WRAP_CONTENT
+        if (!wrap) {
+            lp_item = WindowManager.LayoutParams.MATCH_PARENT
         }
         return WindowManager.LayoutParams(
             lp_item,
@@ -86,7 +86,7 @@ class BackgroundService : BackgroundServiceMP() {
     fun add_view_effect() {
 
         effectView = PointLayout(applicationContext)
-        window_params_effect  = get_wm_lp(false)
+        window_params_effect = get_wm_lp(false)
         window_params_effect.gravity = Gravity.LEFT or Gravity.CENTER
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -126,12 +126,12 @@ class BackgroundService : BackgroundServiceMP() {
                     buttonView.setTextColor(Color.BLUE)
                     buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     start_thread()
-                    (effectView as View).visibility = View.VISIBLE
+                    effectView.visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
                     buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     stop_thread()
-                    (effectView as View).visibility = View.INVISIBLE
+                    effectView.visibility = View.INVISIBLE
                 }
             }
         })
@@ -242,51 +242,27 @@ class BackgroundService : BackgroundServiceMP() {
         detect_run.build(mWidth, mHeight)
         var res = detect_run.get_results(full_path)
 
-        for (item in res){
+        for (item in res) {
 
         }
-        if (res != null && res.size >= 1){
+        if (res != null && res.size >= 1) {
             Handler(Looper.getMainLooper()).post(Runnable {
                 (rectView as RectLayout).show(res)
             })
-        }else{
-            Log.e("???","!!!!!!")
+        } else {
+            Log.e("???", "!!!!!!")
         }
 
-        var c_xy :FloatArray? = null
-        if(res.isNotEmpty()){
-            c_xy = click_xy(res[0].title.toInt(),res[0].getLocation()!!)
+        var c_xy: FloatArray? = null
+        if (res.isNotEmpty()) {
+            c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
         }
-        Log.e("tflite_run",res.toString())
+        Log.e("tflite_run", res.toString())
 
         if (!BuildConfig.DEBUG) {
-            rm_full_path(full_path)
+            utils.rm_full_path(full_path)
         }
         return c_xy
-    }
-
-     fun click_xy(label_title: Int, item: RectF): FloatArray? {
-
-         var x = item.left + (item.right - item.left) / 2 //+ add_size[0]
-         var y = item.top + (item.bottom - item.top) / 2 //+  add_size[1]
-         var arr = FloatArray(2)
-
-         if (x < 0 || y < 0) {
-             return null
-         } else {
-             arr.set(0, x)
-             arr.set(1, y)
-         }
-
-         return arr
-     }
-
-
-    fun rm_full_path(full_path: String) {
-        var f = File(full_path)
-        if (f.exists()) {
-            f.delete()
-        }
     }
 
     fun run_notify() {
@@ -298,36 +274,9 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun ready_media() {
-        mkdir()
+        STORE_DIRECTORY = utils.mkdir()
     }
 
-    fun mkdir() {
-        val externalFilesDir = getExternalFilesDir(null)
-        if (externalFilesDir != null) {
-            STORE_DIRECTORY =
-                externalFilesDir.absolutePath + "/screenshots/"
-            val storeDirectory =
-                File(STORE_DIRECTORY)
-            storeDirectory.deleteRecursively()
-            if (!storeDirectory.exists()) {
-
-                val success: Boolean = storeDirectory.mkdirs()
-                if (!success) {
-                    Log.e(
-                        TAG,
-                        "failed to create file storage directory."
-                    )
-                    return
-                }
-            }
-        } else {
-            Log.e(
-                TAG,
-                "failed to create file storage directory, getExternalFilesDir is null."
-            )
-            return
-        }
-    }
 
     inner class BackgroundThread : Thread() {
 
@@ -339,10 +288,10 @@ class BackgroundService : BackgroundServiceMP() {
                 var full_path = image_available()
 
                 if (full_path != null && full_path != "") {
-                    val  startTime = SystemClock.uptimeMillis()
+                    val startTime = SystemClock.uptimeMillis()
                     var arr: FloatArray? = tflite_run(full_path)
-                    var lastProcessingTimeMs = SystemClock.uptimeMillis()-startTime
-                    Log.d("예측-시간","Inference time: " + lastProcessingTimeMs + "ms")
+                    var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+                    Log.d("예측-시간", "Inference time: " + lastProcessingTimeMs + "ms")
 
                     if (arr != null) {
                         val x = arr.get(0)
