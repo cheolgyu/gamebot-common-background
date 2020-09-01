@@ -96,7 +96,7 @@ class BackgroundService : BackgroundServiceMP() {
             PixelFormat.TRANSLUCENT
         )
 
-        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
+        //window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(rectView, window_params_effect)
@@ -304,9 +304,8 @@ class BackgroundService : BackgroundServiceMP() {
 //            effectViewCanvas.drawRect(item.getLocation(),strokePaint)
         }
         if (res != null && res.size >= 1){
-            val mutableListOf = mutableListOf<Classifier.Recognition>(res[0])
             Handler(Looper.getMainLooper()).post(Runnable {
-                (rectView as RectLayout).show(mutableListOf)
+                (rectView as RectLayout).show(res)
             })
         }else{
             Log.e("???","!!!!!!")

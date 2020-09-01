@@ -1,68 +1,82 @@
 package com.highserpot.background.effect
 
-import android.R.attr.fillColor
-import android.R.attr.strokeWidth
 import android.content.Context
-import android.graphics.Color
-import android.graphics.RectF
-import android.graphics.drawable.GradientDrawable
+import android.graphics.*
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RectShape
 import android.os.Handler
 import android.util.AttributeSet
-import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
-import com.highserpot.background.R
 import com.highserpot.tf.tflite.Classifier
 
 
 class RectLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : RelativeLayout(context, attrs, defStyleAttr) {
+
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         this.setBackgroundColor(Color.TRANSPARENT)
     }
+
     val sec = 300
 
-    fun make_item(location: RectF) {
-        val gd = GradientDrawable()
-        gd.shape = GradientDrawable.RECTANGLE
-        gd.setStroke(10, Color.RED)
-        gd.setSize(((location.right-location.left)).toInt(),((location.bottom-location.top)).toInt())
+    fun get_image_view(location: RectF): ImageView {
+        val sd = ShapeDrawable().apply {
+            intrinsicWidth = ((location.right - location.left)).toInt()
+            intrinsicHeight = ((location.bottom - location.top)).toInt()
+            shape = RectShape()
+            paint.color = Color.BLUE
+            paint.alpha = 255
 
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 10f
+            paint.strokeJoin = Paint.Join.ROUND
+        }
 
+        var iv = ImageView(this.context).apply {
+            setImageDrawable(sd)
+            x = location.left
+            y = location.top
+        }
 
+        return iv
+    }
 
-        var iv = ImageView(this.context)
+    fun get_image_view_label(location: RectF, txt:String): TextView {
 
-        //iv.setImageResource(R.drawable.rect)
-        iv.setImageDrawable(gd)
-        (this as LinearLayout).addView(iv)
-        var view = iv  as View
+        var label = TextView(this.context).apply {
+            x = location.left
+            y = location.top-70f
+            text = txt
+            textSize = 20f
+            setTextColor(Color.BLUE)
+        }
 
-//        val params =
-//            iv.getLayoutParams()
-//        params.width = (location.left-location.right).toInt()
-//        params.height = (location.bottom-location.top).toInt()
-//        iv.setLayoutParams(params)
+        return label
+    }
 
+    fun make_item(location: RectF, title: String) {
+        var iv = get_image_view(location)
+        var tv = get_image_view_label(location,title)
 
-        view.x = location.left - (location.right-location.left)/2
-        view.y = location.top-(location.bottom-location.top)/2
+        this.addView(iv)
+        this.addView(tv)
+
         val mMyTask = Runnable {
-            (this as LinearLayout).removeView(view)
+            this.removeView(iv)
+            this.removeView(tv)
         }
         val mHandler = Handler()
         mHandler.postDelayed(mMyTask, sec.toLong())
 
     }
 
-    fun show(list : List<Classifier.Recognition>){
-        for (item in list){
-            make_item(item.getLocation())
+    fun show(list: List<Classifier.Recognition>) {
+        for (item in list) {
+            make_item(item.getLocation(),item.title)
         }
-
     }
 
 
