@@ -1,12 +1,36 @@
 package com.highserpot.background
 
 import android.content.Context
+import android.graphics.PixelFormat
 import android.graphics.RectF
+import android.os.Build
 import android.util.Log
+import android.view.WindowManager
 import java.io.File
 
 class Utils(var context: Context) {
 
+    fun get_wm_lp(wrap: Boolean): WindowManager.LayoutParams {
+        val LAYOUT_FLAG: Int
+        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+        var lp_item = WindowManager.LayoutParams.WRAP_CONTENT
+        if (!wrap) {
+            lp_item = WindowManager.LayoutParams.MATCH_PARENT
+        }
+        return WindowManager.LayoutParams(
+            lp_item,
+            lp_item,
+            LAYOUT_FLAG,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            PixelFormat.TRANSLUCENT
+        )
+    }
 
     fun rm_full_path(full_path: String) {
         var f = File(full_path)

@@ -50,32 +50,10 @@ class BackgroundService : BackgroundServiceMP() {
         add_view_rect()
     }
 
-    fun get_wm_lp(wrap: Boolean): WindowManager.LayoutParams {
-        val LAYOUT_FLAG: Int
-        LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
-        var lp_item = WindowManager.LayoutParams.WRAP_CONTENT
-        if (!wrap) {
-            lp_item = WindowManager.LayoutParams.MATCH_PARENT
-        }
-        return WindowManager.LayoutParams(
-            lp_item,
-            lp_item,
-            LAYOUT_FLAG,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            PixelFormat.TRANSLUCENT
-        )
-    }
-
     fun add_view_rect() {
 
         rectView = RectLayout(applicationContext)
-        window_params_effect = get_wm_lp(false)
+        window_params_effect = utils.get_wm_lp(false)
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(rectView, window_params_effect)
@@ -85,7 +63,7 @@ class BackgroundService : BackgroundServiceMP() {
     fun add_view_effect() {
 
         effectView = PointLayout(applicationContext)
-        window_params_effect = get_wm_lp(false)
+        window_params_effect = utils.get_wm_lp(false)
         window_params_effect.gravity = Gravity.LEFT or Gravity.CENTER
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -102,7 +80,7 @@ class BackgroundService : BackgroundServiceMP() {
         onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
         // onTopView!!.setOnTouchListener(this)
 
-        window_params = get_wm_lp(true)
+        window_params = utils.get_wm_lp(true)
         window_params.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -178,10 +156,6 @@ class BackgroundService : BackgroundServiceMP() {
             createModel()
             start()
 
-
-//            val bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888)
-//            effectViewCanvas = Canvas(bitmap)
-//            effectView.draw(effectViewCanvas)
         }
 
         // If we get killed, after returning from here, restart
@@ -296,7 +270,10 @@ class BackgroundService : BackgroundServiceMP() {
                         val x = arr.get(0)
                         val y = arr.get(1)
 
-                        //touchService.click(x, y)
+                        if (!BuildConfig.DEBUG) {
+                            touchService.click(x, y)
+                        }
+
                         Handler(Looper.getMainLooper()).post(Runnable {
                             (effectView as PointLayout).draw(x, y)
                         })
