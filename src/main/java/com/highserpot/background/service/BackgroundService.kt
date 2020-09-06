@@ -246,6 +246,24 @@ class BackgroundService : BackgroundServiceMP() {
         if (res.isNotEmpty()) {
             c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
         }
+
+        when (applicationContext.packageName) {
+            "com.highserpot.baram" -> {
+                if (res.isNotEmpty()) {
+                    c_xy = if (res[0].title.toInt() == 1) {
+                        null
+                    } else {
+                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                    }
+                }
+            }
+            else -> {
+                if (res.isNotEmpty()) {
+                    c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                }
+            }
+        }
+
         Log.d("tflite_run", res.toString())
 
         if (!BuildConfig.DEBUG) {
@@ -272,7 +290,7 @@ class BackgroundService : BackgroundServiceMP() {
         override fun run() {
             while (RUN_BACKGROUND) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
-                Thread.sleep(1000)
+                //Thread.sleep(1000)
 
                 var full_path = image_available()
 
