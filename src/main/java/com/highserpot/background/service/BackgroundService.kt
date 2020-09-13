@@ -106,12 +106,12 @@ class BackgroundService : BackgroundServiceMP() {
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
-                    buttonView.text = applicationContext.getString(R.string.over_start_txt)
+                    //buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     start_thread()
                     effectView.visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
-                    buttonView.text = applicationContext.getString(R.string.over_stop_txt)
+                    //buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     stop_thread()
                     effectView.visibility = View.INVISIBLE
                 }
@@ -126,11 +126,11 @@ class BackgroundService : BackgroundServiceMP() {
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
-                    buttonView.text = applicationContext.getString(R.string.rect_layout_start_txt)
+                    //buttonView.text = applicationContext.getString(R.string.rect_layout_start_txt)
                     rectView.visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
-                    buttonView.text = applicationContext.getString(R.string.rect_layout_stop_txt)
+                    //buttonView.text = applicationContext.getString(R.string.rect_layout_stop_txt)
                     rectView.visibility = View.INVISIBLE
                 }
             }
