@@ -4,16 +4,20 @@ package com.highserpot.background.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.media.Image
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
-import android.widget.*
-import com.highserpot.background.BuildConfig
+import android.widget.CompoundButton
+import android.widget.Switch
+import android.widget.Toast
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
@@ -131,6 +135,14 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
         })
+
+
+
+        MobileAds.initialize(applicationContext) {}
+        val mAdView :AdView = onTopView.findViewById(R.id.adVie_on_top_vieww)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
     }
 
     fun start() {
@@ -261,7 +273,7 @@ class BackgroundService : BackgroundServiceMP() {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 1) {
                         null
-                    } else if (res[0].title.toInt() == 4){
+                    } else if (res[0].title.toInt() == 4) {
                         var arr = FloatArray(2)
 
                         val item = res[0].getLocation()
@@ -270,7 +282,7 @@ class BackgroundService : BackgroundServiceMP() {
                         arr.set(0, x)
                         arr.set(1, y)
                         arr
-                    }else {
+                    } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }
                 }
