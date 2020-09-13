@@ -16,6 +16,12 @@ android {
         consumerProguardFiles "consumer-rules.pro"
 
         vectorDrawables.useSupportLibrary = true
+
+        // MODEL SETTING
+        buildConfigField("String", "MODEL_NAME", "\"${model_name}\"")
+        buildConfigField("int", "MODEL_INPUT_SIZE","${model_input_size}")
+        buildConfigField("int", "MODEL_INPUT_ARR_SIZE", "${model_input_arr_size}")
+
     }
 
     buildTypes {
