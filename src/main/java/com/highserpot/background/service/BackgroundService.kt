@@ -257,6 +257,24 @@ class BackgroundService : BackgroundServiceMP() {
                     }
                 }
             }
+            "com.highserpot.v4" -> {
+                if (res.isNotEmpty()) {
+                    c_xy = if (res[0].title.toInt() == 1) {
+                        null
+                    } else if (res[0].title.toInt() == 4){
+                        var arr = FloatArray(2)
+
+                        val item = res[0].getLocation()
+                        val x = item.left + (item.right - item.left) / 2
+                        val y = item.bottom
+                        arr.set(0, x)
+                        arr.set(1, y)
+                        arr
+                    }else {
+                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                    }
+                }
+            }
             else -> {
                 if (res.isNotEmpty()) {
                     c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
@@ -266,9 +284,9 @@ class BackgroundService : BackgroundServiceMP() {
 
         Log.d("tflite_run", res.toString())
 
-        if (!BuildConfig.DEBUG) {
+        //if (!BuildConfig.DEBUG) {
             utils.rm_full_path(full_path)
-        }
+        //}
         return c_xy
     }
 
@@ -291,6 +309,7 @@ class BackgroundService : BackgroundServiceMP() {
             while (RUN_BACKGROUND) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1000)
+                Thread.sleep(300)
 
                 var full_path = image_available()
 
@@ -304,9 +323,9 @@ class BackgroundService : BackgroundServiceMP() {
                         val x = arr.get(0)
                         val y = arr.get(1)
 
-                        if (!BuildConfig.DEBUG) {
+                       // if (!BuildConfig.DEBUG) {
                             touchService.click(x, y)
-                        }
+                       // }
 
                         Handler(Looper.getMainLooper()).post(Runnable {
                             (effectView as PointLayout).draw(x, y)
