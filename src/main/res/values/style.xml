@@ -3,4 +3,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
+    <style name="CustomAppTheme" parent="Theme.AppCompat">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>
