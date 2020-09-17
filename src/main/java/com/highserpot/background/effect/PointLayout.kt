@@ -22,6 +22,7 @@ class PointLayout @JvmOverloads constructor(
     fun get_image_view(cx: Float, cy: Float): ImageView {
         return ImageView(this.context).apply {
             setImageResource(R.drawable.ic_baseline_pets_24)
+            setBackgroundColor(Color.WHITE)
             x = cx - width / 2
             y = cy - height / 2
         }
