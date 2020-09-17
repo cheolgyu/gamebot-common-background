@@ -38,6 +38,7 @@
             android:orientation="vertical">
 
             <Switch
+                android:theme="@style/CustomAppTheme"
                 android:id="@+id/btn_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,8 +57,8 @@
 
                 android:showText="true"
                 android:switchMinWidth="100dp"
-                android:textOff="@string/rect_layout_start_txt"
-                android:textOn="@string/rect_layout_stop_txt"
+                android:textOff="@string/rect_layout_stop_txt"
+                android:textOn="@string/rect_layout_start_txt"
                 android:textStyle="bold"
 
                 />

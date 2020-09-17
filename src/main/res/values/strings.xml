@@ -23,13 +23,13 @@
     <string name="dialog_message">이 어플은
        머신러닝으로 버튼이미지를 학습시켜 클릭 이벤트를 발생시킵니다.
        학습한것과 비슷한 버튼 이미지가 클릭될수 있고 그에 따른 책임을 지지 않습니다.
-
-       \n가방이나 결제 화면등 중요한 화면에서는 어플을 종료후 이용하세요.
+       가방이나 결제 화면등 중요한 화면에서는 어플을 종료후 이용하세요.
     </string>
     <string name="agree">동의</string>
     <string name="not_agree">동의 안함</string>
     <string name="preference_file_key">welcome</string>
 
+    <string name="gsDialog_title">접근성 권한 설정이 필요합니다.</string>
 
     <string name="label_1">이름 1</string>
     <string name="label_2">이름 2</string>

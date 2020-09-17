@@ -36,12 +36,12 @@ open class MediaProjectionActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // mIntent = new_bg()
-
-        if (CheckTouch(this).chk()) {
-            textView2.text = msg_y
-        } else {
-            textView2.text = msg_n
-        }
+//
+//        if (CheckTouch(this).chk()) {
+//            textView2.text = msg_y
+//        } else {
+//            textView2.text = msg_n
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,13 +69,13 @@ open class MediaProjectionActivity : AppCompatActivity() {
         )
         if (Settings.canDrawOverlays(applicationContext)) {
             if (CheckTouch(this).chk()) {
-                textView2.text = msg_y
+               // textView2.text = msg_y
                 var mediaProjectionManager =
                     getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
                 startActivityForResult(captureIntent, 1000)
             } else {
-                textView2.text = msg_n
+              //  textView2.text = msg_n
                 Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
 
             }

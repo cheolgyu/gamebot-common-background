@@ -7,7 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.provider.Settings
-import android.util.Log
+import android.text.Html
 import android.view.accessibility.AccessibilityManager
 
 
@@ -49,11 +49,14 @@ class CheckTouch(val context: Context) {
 
     fun setAccessibilityPermissions() {
         val gsDialog: AlertDialog.Builder = AlertDialog.Builder(context)
-        gsDialog.setTitle("접근성 권한 설정")
-        gsDialog.setMessage(
-            "접근성 권한을 필요로 합니다. " +
-                    "\n 확인을 눌러 설정에 가셔서 " + context.getString(R.string.app_name) + " 을 켜주세요."
-        )
+
+        gsDialog.setTitle(context.getString(R.string.gsDialog_title))
+
+        val s1 = "확인을 눌러 설정페이지에서"
+        val s2 = "<b>" + context.getString(R.string.app_name) + "</b> 찾아 켜주세요."
+        val strMessage = Html.fromHtml("$s1<br>$s2")
+        gsDialog.setMessage(strMessage)
+
         gsDialog.setPositiveButton("확인",
             DialogInterface.OnClickListener { dialog, which ->
                 context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
