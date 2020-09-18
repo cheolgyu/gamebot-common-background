@@ -19,7 +19,8 @@ android {
 
         // MODEL SETTING
         buildConfigField("String", "MODEL_NAME", "\"${model_name}\"")
-        buildConfigField("int", "MODEL_INPUT_SIZE","${model_input_size}")
+        buildConfigField("int", "MODEL_INPUT_SIZE_W","${model_input_size_w}")
+        buildConfigField("int", "MODEL_INPUT_SIZE_H","${model_input_size_h}")
         buildConfigField("int", "MODEL_INPUT_ARR_SIZE", "${model_input_arr_size}")
     }
 

@@ -18,6 +18,7 @@ import android.widget.Toast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
@@ -282,6 +283,15 @@ class BackgroundService : BackgroundServiceMP() {
                         arr.set(0, x)
                         arr.set(1, y)
                         arr
+                    } else {
+                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                    }
+                }
+            }
+            "com.highserpot.gotgl" -> {
+                if (res.isNotEmpty()) {
+                    c_xy = if (res[0].title.toInt() == 4) {
+                        null
                     } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }

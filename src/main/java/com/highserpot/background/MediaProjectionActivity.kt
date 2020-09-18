@@ -7,13 +7,14 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Html
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.highserpot.background.service.BackgroundService
 import com.highserpot.myad.Reward
-import kotlinx.android.synthetic.main.activity_mediaprojection.*
 
 
 open class MediaProjectionActivity : AppCompatActivity() {
@@ -49,6 +50,8 @@ open class MediaProjectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mediaprojection)
         reward.ready()
 
+        val textView = findViewById<TextView>(R.id.manual)
+        textView.text = Html.fromHtml(getString(R.string.manual))
 
         val action = intent.extras?.getString("action")
         mIntent = new_bg()
