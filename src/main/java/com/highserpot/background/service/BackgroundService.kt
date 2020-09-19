@@ -12,13 +12,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
-import android.widget.CompoundButton
-import android.widget.Switch
-import android.widget.Toast
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
-import com.highserpot.background.BuildConfig
+import android.widget.*
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
@@ -44,6 +38,8 @@ class BackgroundService : BackgroundServiceMP() {
     lateinit var window_params_effect: WindowManager.LayoutParams
 
     lateinit var btn_switch: Switch
+    lateinit var btn_on_off: ImageView
+    lateinit var area_on_off: LinearLayout
     lateinit var rect_switch: Switch
     lateinit var utils: Utils
 
@@ -93,12 +89,17 @@ class BackgroundService : BackgroundServiceMP() {
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(onTopView, window_params)
 
-        //val btn_move: Button = onTopView.findViewById(R.id.btn_move)
-        onTopView.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(arg0: View?, arg1: MotionEvent): Boolean {
-                return move(arg0!!, arg1)
+        btn_on_off = onTopView.findViewById(R.id.btn_on_off)
+        area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
+        btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
+        btn_on_off.setOnClickListener {
+            if(area_on_off.visibility == View.VISIBLE){
+                area_on_off.visibility = View.GONE
+            }else{
+                area_on_off.visibility = View.VISIBLE
             }
-        })
+        }
+
         btn_switch = onTopView.findViewById(R.id.btn_switch)
         btn_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(
@@ -139,10 +140,12 @@ class BackgroundService : BackgroundServiceMP() {
 
 
 
-        MobileAds.initialize(applicationContext) {}
-        val mAdView :AdView = onTopView.findViewById(R.id.adVie_on_top_vieww)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
+
+
+//        MobileAds.initialize(applicationContext) {}
+//        val mAdView :AdView = onTopView.findViewById(R.id.adVie_on_top_vieww)
+//        val adRequest = AdRequest.Builder().build()
+//        mAdView.loadAd(adRequest)
 
     }
 
@@ -368,10 +371,6 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun move(view: View, event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                prevX = event.rawX
-                prevY = event.rawY
-            }
             MotionEvent.ACTION_MOVE -> {
                 val rawX: Float = event.rawX // 절대 X 좌표 값을 가져온다.
                 val rawY: Float = event.rawY // 절대 Y 좌표값을 가져온다.
