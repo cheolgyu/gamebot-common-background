@@ -288,9 +288,12 @@ class BackgroundService : BackgroundServiceMP() {
             "com.highserpot.gotgl" -> {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 4) {
-                        val mutableIterator = res.iterator()
                         res.removeAll { recognition -> recognition.title.toInt() == 4 }
-                        null
+                        if(res.size > 0) {
+                            utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                        }else{
+                            null
+                        }
                     } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }
@@ -326,19 +329,6 @@ class BackgroundService : BackgroundServiceMP() {
         //}
         return c_xy
     }
-
-    fun run_notify() {
-        var noti = Noti(this)
-        noti.createNotificationChannel()
-        var notify = noti.build(11232131)
-        startForeground(FOREGROUND_SERVICE_ID, notify)
-
-    }
-
-    fun ready_media() {
-        STORE_DIRECTORY = utils.mkdir()
-    }
-
 
     inner class BackgroundThread : Thread() {
 
@@ -420,5 +410,20 @@ class BackgroundService : BackgroundServiceMP() {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+
+    fun run_notify() {
+        var noti = Noti(this)
+        noti.createNotificationChannel()
+        var notify = noti.build(11232131)
+        startForeground(FOREGROUND_SERVICE_ID, notify)
+
+    }
+
+    fun ready_media() {
+        STORE_DIRECTORY = utils.mkdir()
+    }
+
+
 }
 
