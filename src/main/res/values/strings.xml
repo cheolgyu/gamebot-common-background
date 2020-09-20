@@ -32,6 +32,8 @@
 
     <string name="gsDialog_title">접근성 권한 설정이 필요합니다.</string>
 
+    <string name="wakeup">일어나</string>
+
     <string name="label_1">이름 1</string>
     <string name="label_2">이름 2</string>
     <string name="label_3">이름 3</string>

@@ -92,5 +92,9 @@ class RectLayout @JvmOverloads constructor(
         }
     }
 
+    fun show_lable(item: RectF, lable:String) {
+        make_item(item,lable)
+    }
+
 
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.RectF
 import android.media.Image
 import android.os.Handler
 import android.os.Looper
@@ -13,6 +14,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
+import com.highserpot.background.BuildConfig
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
@@ -93,9 +95,9 @@ class BackgroundService : BackgroundServiceMP() {
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
         btn_on_off.setOnClickListener {
-            if(area_on_off.visibility == View.VISIBLE){
+            if (area_on_off.visibility == View.VISIBLE) {
                 area_on_off.visibility = View.GONE
-            }else{
+            } else {
                 area_on_off.visibility = View.VISIBLE
             }
         }
@@ -137,9 +139,6 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
         })
-
-
-
 
 
 //        MobileAds.initialize(applicationContext) {}
@@ -252,11 +251,6 @@ class BackgroundService : BackgroundServiceMP() {
         detect_run.build(mWidth, mHeight)
         var res = detect_run.get_results(full_path)
 
-        if (res != null && res.size >= 1 && rectView != null && rectView.visibility == View.VISIBLE) {
-            Handler(Looper.getMainLooper()).post(Runnable {
-                (rectView as RectLayout).show(res)
-            })
-        }
 
         var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
@@ -294,10 +288,22 @@ class BackgroundService : BackgroundServiceMP() {
             "com.highserpot.gotgl" -> {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 4) {
+                        val mutableIterator = res.iterator()
+                        res.removeAll { recognition -> recognition.title.toInt() == 4 }
                         null
                     } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }
+                } else {
+                    Log.d("예측결과", "빈값왔다.")
+                    val pw: Float = ((mWidth / 4).toFloat())
+                    val item = RectF(pw, 100F, 1F, 1F)
+                    val label = getString(R.string.wakeup)
+                    c_xy = utils.click_xy(0, item)
+
+                    Handler(Looper.getMainLooper()).post(Runnable {
+                        (rectView as RectLayout).show_lable(item, label)
+                    })
                 }
             }
             else -> {
@@ -307,10 +313,16 @@ class BackgroundService : BackgroundServiceMP() {
             }
         }
 
-        Log.d("tflite_run", res.toString())
+        if (res != null && res.size >= 1 && rectView != null && rectView.visibility == View.VISIBLE) {
+            Handler(Looper.getMainLooper()).post(Runnable {
+                (rectView as RectLayout).show(res)
+            })
+        }
+
+        Log.d("예측정리", res.toString())
 
         //if (!BuildConfig.DEBUG) {
-            utils.rm_full_path(full_path)
+        utils.rm_full_path(full_path)
         //}
         return c_xy
     }
@@ -348,9 +360,9 @@ class BackgroundService : BackgroundServiceMP() {
                         val x = arr.get(0)
                         val y = arr.get(1)
 
-                       // if (!BuildConfig.DEBUG) {
-                            touchService.click(x, y)
-                       // }
+                        // if (!BuildConfig.DEBUG) {
+                        touchService.click(x, y)
+                        // }
 
                         Handler(Looper.getMainLooper()).post(Runnable {
                             (effectView as PointLayout).draw(x, y)
