@@ -300,7 +300,7 @@ class BackgroundService : BackgroundServiceMP() {
                 } else {
                     Log.d("예측결과", "빈값왔다.")
                     val pw: Float = ((mWidth / 4).toFloat())
-                    val item = RectF(pw, 100F, 1F, 1F)
+                    val item = RectF(pw+50, 100F, 1F, 1F)
                     val label = getString(R.string.wakeup)
                     c_xy = utils.click_xy(0, item)
 
