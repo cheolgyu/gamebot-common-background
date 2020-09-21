@@ -21,6 +21,7 @@ import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
 import java.io.FileOutputStream
+import java.lang.reflect.Array.set
 import java.nio.ByteBuffer
 
 
@@ -289,23 +290,27 @@ class BackgroundService : BackgroundServiceMP() {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 4) {
                         res.removeAll { recognition -> recognition.title.toInt() == 4 }
-                        if(res.size > 0) {
+                        if (res.size > 0) {
                             utils.click_xy(res[0].title.toInt(), res[0].getLocation())
-                        }else{
+                        } else {
                             null
                         }
                     } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }
                 } else {
-                    Log.d("예측결과", "빈값왔다.")
-                    val pw: Float = ((mWidth / 4).toFloat())
-                    val item = RectF(pw+50, 100F, 1F, 1F)
+                    Log.d("예측결과", "빈값왔다." + mWidth.toString())
+                    val px: Float = (mWidth - 10).toFloat()
+                    val py: Float = ((mHeight / 2)).toFloat()
+                    val p_lb = RectF((mWidth / 2).toFloat(), (mHeight / 2).toFloat(), 1F, 1F)
                     val label = getString(R.string.wakeup)
-                    c_xy = utils.click_xy(0, item)
+                    c_xy = FloatArray(2).apply {
+                        set(0, px)
+                        set(1, py)
+                    }
 
                     Handler(Looper.getMainLooper()).post(Runnable {
-                        (rectView as RectLayout).show_lable(item, label)
+                        (rectView as RectLayout).show_lable(p_lb, label)
                     })
                 }
             }
