@@ -341,7 +341,8 @@ class BackgroundService : BackgroundServiceMP() {
             while (RUN_BACKGROUND && !RUN_DETECT) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1000)
-                //Thread.sleep(300)
+                //image_available 기다리는시간.
+                Thread.sleep(300)
 
                 var full_path = image_available()
 
