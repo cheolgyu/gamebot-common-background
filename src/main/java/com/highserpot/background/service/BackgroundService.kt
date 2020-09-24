@@ -338,16 +338,18 @@ class BackgroundService : BackgroundServiceMP() {
     inner class BackgroundThread : Thread() {
 
         override fun run() {
-            while (RUN_BACKGROUND) {
+            while (RUN_BACKGROUND && !RUN_DETECT) {
                 //화면 갱신하게 시간줌. 대화 다나올 시간
                 //Thread.sleep(1000)
-                Thread.sleep(300)
+                //Thread.sleep(300)
 
                 var full_path = image_available()
 
                 if (full_path != null && full_path != "") {
                     val startTime = SystemClock.uptimeMillis()
+                    RUN_DETECT = true
                     var arr: FloatArray? = tflite_run(full_path)
+                    RUN_DETECT = false
                     var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
                     Log.d("예측-시간", "Inference time: " + lastProcessingTimeMs + "ms")
 

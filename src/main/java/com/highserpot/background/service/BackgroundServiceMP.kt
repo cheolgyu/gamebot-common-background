@@ -25,7 +25,7 @@ import com.highserpot.tf.tflite.Run
 
 
 abstract class BackgroundServiceMP : Service() {
-
+    var RUN_DETECT = false
     var RUN_BACKGROUND = false
     var my_data: Intent? = null
     var my_resultCode: Int? = null
