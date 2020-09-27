@@ -317,7 +317,10 @@ class BackgroundService : BackgroundServiceMP() {
             "com.highserpot.illusionc" -> {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 6) {
-                        stop()
+                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                            stop()
+                        },1)
+
                         null
                     }  else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
