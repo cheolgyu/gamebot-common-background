@@ -135,7 +135,7 @@ abstract class BackgroundServiceMP : Service() {
             mWidth,
             mHeight,
             PixelFormat.RGBA_8888,
-            2
+            1
         )
     }
 
