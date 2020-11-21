@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Html
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -22,7 +24,6 @@ open class MediaProjectionActivity : AppCompatActivity() {
     val msg_y = "접근성 권한을 얻었습니다.\n시작하기를 눌러주세요."
     var mIntent: Intent? = null
     var REQ_CODE_OVERLAY_PERMISSION = 1
-    var reward: Reward = Reward(this)
 
     fun new_bg(): Intent {
         if (mIntent == null) {
@@ -48,7 +49,6 @@ open class MediaProjectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mediaprojection)
-        reward.ready()
 
         val textView = findViewById<TextView>(R.id.manual)
         textView.text = Html.fromHtml(getString(R.string.manual))
@@ -109,8 +109,4 @@ open class MediaProjectionActivity : AppCompatActivity() {
         CheckTouch(this).alert_dialog()
     }
 
-    fun start_reward(): Boolean {
-        reward.load()
-        return reward.has_reward
-    }
 }
