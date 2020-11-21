@@ -3,11 +3,12 @@
     package="com.highserpot.background">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.SYSTEM_ALERT_WINDOW"
         tools:node="merge" />
 
-    <application tools:node="merge">
+    <application tools:node="merge"  >
 
         <service
             android:name="com.highserpot.background.service.TouchService"
