@@ -14,14 +14,15 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
-import com.highserpot.background.BuildConfig
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
 import java.io.FileOutputStream
-import java.lang.reflect.Array.set
 import java.nio.ByteBuffer
 
 
@@ -90,6 +91,7 @@ class BackgroundService : BackgroundServiceMP() {
         window_params.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        load_admob()
         manager.addView(onTopView, window_params)
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
@@ -142,11 +144,14 @@ class BackgroundService : BackgroundServiceMP() {
         })
 
 
-//        MobileAds.initialize(applicationContext) {}
-//        val mAdView :AdView = onTopView.findViewById(R.id.adVie_on_top_vieww)
-//        val adRequest = AdRequest.Builder().build()
-//        mAdView.loadAd(adRequest)
 
+    }
+
+    fun load_admob(){
+        //MobileAds.initialize(applicationContext) {}
+        val mAdView : AdView = onTopView.findViewById(R.id.adview_on_top_banner)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
     }
 
     fun start() {
@@ -319,10 +324,10 @@ class BackgroundService : BackgroundServiceMP() {
                     c_xy = if (res[0].title.toInt() == 6) {
                         Handler(Looper.getMainLooper()).postDelayed(Runnable {
                             stop()
-                        },1)
+                        }, 1)
 
                         null
-                    }  else {
+                    } else {
                         utils.click_xy(res[0].title.toInt(), res[0].getLocation())
                     }
                 }
