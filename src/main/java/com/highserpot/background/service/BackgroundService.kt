@@ -210,7 +210,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         override fun run() {
             while (true) {
-                if (BS_THREAD && !RUN_DETECT){
+                if (BS_THREAD && !RUN_DETECT) {
                     //화면 갱신하게 시간줌. 대화 다나올 시간
                     //Thread.sleep(1000)
                     //image_available 기다리는시간.
@@ -235,7 +235,7 @@ class BackgroundService : BackgroundServiceMP() {
                             // }
 
                             Handler(Looper.getMainLooper()).post(Runnable {
-                                bsView.draw_effect(x,y)
+                                bsView.draw_effect(x, y)
                             })
 
                             //터치후 화면 갱신하게 시간줌.
@@ -253,7 +253,6 @@ class BackgroundService : BackgroundServiceMP() {
         }
 
     }
-
 
 
     override fun onDestroy() {

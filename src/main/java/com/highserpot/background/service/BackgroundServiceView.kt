@@ -32,22 +32,22 @@ class BackgroundServiceView(var ctx: Context) {
     var prevX = 0f
     var prevY = 0f
 
-    init{
+    init {
         utils = Utils(ctx)
         load_view()
         load_view_effect()
         load_view_rect()
     }
 
-    fun draw_effect(x:Float,y:Float){
+    fun draw_effect(x: Float, y: Float) {
         (effectView as PointLayout).draw(x, y)
     }
 
-    fun draw_rect(p_lb:RectF, label:String){
+    fun draw_rect(p_lb: RectF, label: String) {
         (rectView as RectLayout).show_lable(p_lb, label)
     }
 
-    fun draw_rect_show(res:MutableList<Classifier.Recognition>){
+    fun draw_rect_show(res: MutableList<Classifier.Recognition>) {
         (rectView as RectLayout).show(res)
     }
 
@@ -65,7 +65,7 @@ class BackgroundServiceView(var ctx: Context) {
         rect_switch.isChecked = false
     }
 
-    fun destroy(){
+    fun destroy() {
         manager.removeView(onTopView)
         manager.removeView(effectView)
     }
@@ -108,7 +108,7 @@ class BackgroundServiceView(var ctx: Context) {
         listener_load_view()
     }
 
-    fun listener_load_view(){
+    fun listener_load_view() {
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
@@ -169,10 +169,10 @@ class BackgroundServiceView(var ctx: Context) {
         })
     }
 
-    fun load_admob(){
+    fun load_admob() {
         Log.d("탑뷰-광고", "load_admob")
 
-        val mAdView : AdView = onTopView.findViewById(R.id.always_on_top_adview)
+        val mAdView: AdView = onTopView.findViewById(R.id.always_on_top_adview)
         val adRequest = AdRequest.Builder().build()
         mAdView.adListener = object : AdListener() {
             override fun onAdLoaded() {
@@ -180,7 +180,7 @@ class BackgroundServiceView(var ctx: Context) {
             }
 
             override fun onAdFailedToLoad(errorCode: Int) {
-                Log.d("탑뷰-광고", "onAdFailedToLoad:"+errorCode.toString())
+                Log.d("탑뷰-광고", "onAdFailedToLoad:" + errorCode.toString())
             }
 
             override fun onAdOpened() {
