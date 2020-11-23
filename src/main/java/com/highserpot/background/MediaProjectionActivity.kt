@@ -17,8 +17,6 @@ import com.highserpot.background.service.BackgroundService
 
 
 open class MediaProjectionActivity : AppCompatActivity() {
-    var msg_n = "접근성 권한이 필요해요."
-    val msg_y = "접근성 권한을 얻었습니다.\n시작하기를 눌러주세요."
     var mIntent: Intent? = null
     var REQ_CODE_OVERLAY_PERMISSION = 1
 
@@ -30,17 +28,6 @@ open class MediaProjectionActivity : AppCompatActivity() {
             return mIntent!!
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // mIntent = new_bg()
-//
-//        if (CheckTouch(this).chk()) {
-//            textView2.text = msg_y
-//        } else {
-//            textView2.text = msg_n
-//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,14 +56,12 @@ open class MediaProjectionActivity : AppCompatActivity() {
         )
         if (Settings.canDrawOverlays(applicationContext)) {
             if (CheckTouch(this).chk()) {
-               // textView2.text = msg_y
                 var mediaProjectionManager =
                     getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
                 startActivityForResult(captureIntent, 1000)
             } else {
-              //  textView2.text = msg_n
-                Toast.makeText(applicationContext, msg_n, Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.accessibility_service_description), Toast.LENGTH_SHORT).show()
 
             }
         } else {

@@ -50,14 +50,15 @@ class CheckTouch(val context: Context) {
     fun setAccessibilityPermissions() {
         val gsDialog: AlertDialog.Builder = AlertDialog.Builder(context)
 
-        gsDialog.setTitle(context.getString(R.string.gsDialog_title))
 
-        val s1 = "확인을 눌러 설정페이지에서"
-        val s2 = "<b>" + context.getString(R.string.app_name) + "</b> 찾아 켜주세요."
-        val strMessage = Html.fromHtml("$s1<br>$s2")
-        gsDialog.setMessage(strMessage)
+        val txt_t = context.getString(R.string.gsDialog_title)
+        val txt_a = context.getString(R.string.gsDialog_action)
+        val txt_c = String.format(context.getString(R.string.gsDialog_context), context.getString(R.string.app_name))
 
-        gsDialog.setPositiveButton("확인",
+        gsDialog.setTitle(txt_t)
+        gsDialog.setMessage(txt_c)
+
+        gsDialog.setPositiveButton(txt_a,
             DialogInterface.OnClickListener { dialog, which ->
                 context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                 return@OnClickListener

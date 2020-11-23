@@ -10,7 +10,7 @@
     <string name="channel_name">스톤에이지월드 하자</string>
     <string name="channel_description">스톤에이지월드 하자</string>
     <string name="accessibility_service_label">스톤에이지월드 하자</string>
-    <string name="accessibility_service_description">스톤에이지월드 하자</string>
+    <string name="accessibility_service_description">클릭권한을 주세요.</string>
     <string name="start_txt">시작하기</string>
     <string name="exit_txt">종료하기</string>
     <string name="danger_txt">경고</string>
@@ -30,7 +30,12 @@
     <string name="not_agree">동의 안함</string>
     <string name="preference_file_key">welcome</string>
 
-    <string name="gsDialog_title">접근성 권한 설정이 필요합니다.</string>
+    <string name="gsDialog_title">터치 권한을 주세요.</string>
+    <string name="gsDialog_context">
+    확인을 누르면 설정페이지로 이동합니다.\n
+    %s 터치하여 사용권한을 주세요.
+    </string>
+    <string name="gsDialog_action">확인</string>
 
     <string name="wakeup">일어나</string>
 
