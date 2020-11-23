@@ -14,8 +14,8 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.*
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.highserpot.background.R
 import com.highserpot.background.Utils
@@ -51,12 +51,16 @@ class BackgroundService : BackgroundServiceMP() {
         utils = Utils(this.applicationContext)
         run_notify()
         ready_media()
-        add_view_top()
-        add_view_effect()
-        add_view_rect()
+        ready_view()
     }
 
-    fun add_view_rect() {
+    fun ready_view(){
+        load_view()
+        load_view_effect()
+        load_view_rect()
+    }
+
+    fun load_view_rect() {
 
         rectView = RectLayout(applicationContext)
         window_params_effect = utils.get_wm_lp(false)
@@ -66,34 +70,35 @@ class BackgroundService : BackgroundServiceMP() {
 
     }
 
-    fun add_view_effect() {
+    fun load_view_effect() {
 
         effectView = PointLayout(applicationContext)
         window_params_effect = utils.get_wm_lp(false)
-        window_params_effect.gravity = Gravity.LEFT or Gravity.CENTER
+        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(effectView, window_params_effect)
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Throws(java.lang.Exception::class)
-    fun add_view_top() {
+    fun load_view() {
 
         val inflater =
             getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
-        // onTopView!!.setOnTouchListener(this)
 
         window_params = utils.get_wm_lp(true)
         window_params.flags
-        window_params.gravity = Gravity.LEFT or Gravity.TOP
+        window_params.gravity = Gravity.LEFT or Gravity.CENTER
 
         manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        load_admob()
         manager.addView(onTopView, window_params)
 
+        load_admob()
+        listener_load_view()
+    }
+
+    fun listener_load_view(){
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
@@ -142,15 +147,40 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
         })
-
-
-
     }
 
     fun load_admob(){
-        //MobileAds.initialize(applicationContext) {}
-        val mAdView : AdView = onTopView.findViewById(R.id.adview_on_top_banner)
+        Log.d("탑뷰-광고", "load_admob")
+
+        val mAdView : AdView = onTopView.findViewById(R.id.always_on_top_adview)
         val adRequest = AdRequest.Builder().build()
+        mAdView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                Log.d("탑뷰-광고", "onAdLoaded")
+            }
+
+            override fun onAdFailedToLoad(errorCode: Int) {
+                Log.d("탑뷰-광고", "onAdFailedToLoad:"+errorCode.toString())
+            }
+
+            override fun onAdOpened() {
+                Log.d("탑뷰-광고", "onAdOpened")
+            }
+
+            override fun onAdClicked() {
+                Log.d("탑뷰-광고", "onAdClicked")
+            }
+
+            override fun onAdLeftApplication() {
+                Log.d("탑뷰-광고", "onAdLeftApplication")
+            }
+
+            override fun onAdClosed() {
+                Log.d("탑뷰-광고", "onAdClosed")
+                // Code to be executed when the interstitial ad is closed.
+                mAdView.loadAd(AdRequest.Builder().build())
+            }
+        }
         mAdView.loadAd(adRequest)
     }
 

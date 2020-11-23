@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:orientation="horizontal">
@@ -32,28 +31,26 @@
             android:orientation="vertical">
 
             <Switch
-                android:theme="@style/CustomAppTheme"
                 android:id="@+id/btn_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:showText="true"
                 android:switchMinWidth="100dp"
                 android:textOff="@string/over_stop_txt"
                 android:textOn="@string/over_start_txt"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:theme="@style/CustomAppTheme" />
 
             <Switch
-                android:theme="@style/CustomAppTheme"
                 android:id="@+id/rect_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:showText="true"
                 android:switchMinWidth="100dp"
                 android:textOff="@string/rect_layout_stop_txt"
                 android:textOn="@string/rect_layout_start_txt"
                 android:textStyle="bold"
+                android:theme="@style/CustomAppTheme"
 
                 />
         </LinearLayout>
@@ -61,22 +58,24 @@
 
     </LinearLayout>
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@android:color/white"-->
-<!--        android:orientation="horizontal">-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:id="@+id/top_view_banner_layout"
+        android:orientation="horizontal">
 
-<!--        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"-->
-<!--            android:id="@+id/adVie_on_top_vieww"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            ads:adSize="BANNER"-->
-<!--            ads:adUnitId="@string/ad_banner" />-->
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/always_on_top_adview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/ad_banner" />
 
-<!--    </LinearLayout>-->
+    </LinearLayout>
 
 
 </LinearLayout>

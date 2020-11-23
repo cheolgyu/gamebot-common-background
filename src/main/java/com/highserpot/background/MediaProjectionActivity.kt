@@ -9,14 +9,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Html
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.highserpot.background.service.BackgroundService
-import com.highserpot.myad.Reward
 
 
 open class MediaProjectionActivity : AppCompatActivity() {
@@ -67,7 +64,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
 
     fun service_start_btn(view: View?) {
         Log.d(
-            "Settings.canDrawOverlays(applicationContext)",
+            "탑뷰",
             Settings.canDrawOverlays(applicationContext).toString()
         )
         if (Settings.canDrawOverlays(applicationContext)) {
@@ -98,6 +95,10 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     open fun onObtainingPermissionOverlayWindow() {
+        Log.d(
+            "탑뷰","권한"
+
+        )
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:$packageName")
