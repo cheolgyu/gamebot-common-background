@@ -1,26 +1,17 @@
 package com.highserpot.background.service
 
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.RectF
 import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
 import android.widget.*
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.highserpot.background.R
 import com.highserpot.background.Utils
-import com.highserpot.background.effect.PointLayout
-import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -29,193 +20,25 @@ import java.nio.ByteBuffer
 class BackgroundService : BackgroundServiceMP() {
 
     var STORE_DIRECTORY: String? = null
-    var mBackgroundThread: BackgroundThread? = null
     private val FOREGROUND_SERVICE_ID = 1000
-    lateinit var onTopView: View
-    lateinit var effectView: View
-    lateinit var rectView: View
 
-    lateinit var manager: WindowManager
-    var prevX = 0f
-    var prevY = 0f
-    lateinit var window_params: WindowManager.LayoutParams
-    lateinit var window_params_effect: WindowManager.LayoutParams
-
-    lateinit var btn_switch: Switch
-    lateinit var btn_on_off: ImageView
-    lateinit var area_on_off: LinearLayout
-    lateinit var rect_switch: Switch
     lateinit var utils: Utils
+    lateinit var bsView: BackgroundServiceView
+    lateinit var bsThread: BackgroundThread
 
     override fun onCreate() {
         utils = Utils(this.applicationContext)
+
+        BS_THREAD = true
+        bsThread = BackgroundThread()
+        bsThread!!.start()
+
         run_notify()
         ready_media()
-        ready_view()
-    }
+        bsView = BackgroundServiceView(applicationContext)
 
-    fun ready_view(){
-        load_view()
-        load_view_effect()
-        load_view_rect()
-    }
-
-    fun load_view_rect() {
-
-        rectView = RectLayout(applicationContext)
-        window_params_effect = utils.get_wm_lp(false)
-
-        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        manager.addView(rectView, window_params_effect)
 
     }
-
-    fun load_view_effect() {
-
-        effectView = PointLayout(applicationContext)
-        window_params_effect = utils.get_wm_lp(false)
-        window_params_effect.gravity = Gravity.LEFT or Gravity.TOP
-
-        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        manager.addView(effectView, window_params_effect)
-
-    }
-
-    fun load_view() {
-
-        val inflater =
-            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
-
-        window_params = utils.get_wm_lp(true)
-        window_params.flags
-        window_params.gravity = Gravity.LEFT or Gravity.CENTER
-
-        manager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        manager.addView(onTopView, window_params)
-
-        load_admob()
-        listener_load_view()
-    }
-
-    fun listener_load_view(){
-        btn_on_off = onTopView.findViewById(R.id.btn_on_off)
-        area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
-        btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
-        btn_on_off.setOnClickListener {
-            if (area_on_off.visibility == View.VISIBLE) {
-                area_on_off.visibility = View.GONE
-            } else {
-                area_on_off.visibility = View.VISIBLE
-            }
-        }
-
-        btn_switch = onTopView.findViewById(R.id.btn_switch)
-        btn_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(
-                buttonView: CompoundButton,
-                isChecked: Boolean
-            ) {
-                if (isChecked) {
-                    buttonView.setTextColor(Color.BLUE)
-                    //buttonView.text = applicationContext.getString(R.string.over_start_txt)
-                    start_thread()
-                    effectView.visibility = View.VISIBLE
-                } else {
-                    buttonView.setTextColor(Color.BLACK)
-                    //buttonView.text = applicationContext.getString(R.string.over_stop_txt)
-                    stop_thread()
-                    effectView.visibility = View.INVISIBLE
-                }
-            }
-        })
-
-        rect_switch = onTopView.findViewById(R.id.rect_switch)
-        rect_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(
-                buttonView: CompoundButton,
-                isChecked: Boolean
-            ) {
-                if (isChecked) {
-                    buttonView.setTextColor(Color.BLUE)
-                    //buttonView.text = applicationContext.getString(R.string.rect_layout_start_txt)
-                    rectView.visibility = View.VISIBLE
-                } else {
-                    buttonView.setTextColor(Color.BLACK)
-                    //buttonView.text = applicationContext.getString(R.string.rect_layout_stop_txt)
-                    rectView.visibility = View.INVISIBLE
-                }
-            }
-        })
-    }
-
-    fun load_admob(){
-        Log.d("탑뷰-광고", "load_admob")
-
-        val mAdView : AdView = onTopView.findViewById(R.id.always_on_top_adview)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                Log.d("탑뷰-광고", "onAdLoaded")
-            }
-
-            override fun onAdFailedToLoad(errorCode: Int) {
-                Log.d("탑뷰-광고", "onAdFailedToLoad:"+errorCode.toString())
-            }
-
-            override fun onAdOpened() {
-                Log.d("탑뷰-광고", "onAdOpened")
-            }
-
-            override fun onAdClicked() {
-                Log.d("탑뷰-광고", "onAdClicked")
-            }
-
-            override fun onAdLeftApplication() {
-                Log.d("탑뷰-광고", "onAdLeftApplication")
-            }
-
-            override fun onAdClosed() {
-                Log.d("탑뷰-광고", "onAdClosed")
-                // Code to be executed when the interstitial ad is closed.
-                mAdView.loadAd(AdRequest.Builder().build())
-            }
-        }
-        mAdView.loadAd(adRequest)
-    }
-
-    fun start() {
-        btn_switch.isChecked = true
-        rect_switch.isChecked = true
-    }
-
-    fun stop() {
-        btn_switch.isChecked = false
-        rect_switch.isChecked = false
-    }
-
-    fun start_thread() {
-        RUN_BACKGROUND = true
-        // start capture handling thread
-        mBackgroundThread = BackgroundThread()
-        mBackgroundThread!!.start()
-
-        Toast.makeText(
-            this,
-            applicationContext.getString(R.string.app_service_thread_start),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    fun stop_thread() {
-        RUN_BACKGROUND = false
-        Toast.makeText(
-            this,
-            applicationContext.getString(R.string.app_service_thread_stop),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
 
     @Throws(java.lang.Exception::class)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -226,7 +49,7 @@ class BackgroundService : BackgroundServiceMP() {
 
             createVirtualDisplay()
             createModel()
-            start()
+            bsView.start()
 
         }
 
@@ -345,7 +168,7 @@ class BackgroundService : BackgroundServiceMP() {
                     }
 
                     Handler(Looper.getMainLooper()).post(Runnable {
-                        (rectView as RectLayout).show_lable(p_lb, label)
+                        bsView.draw_rect(p_lb, label)
                     })
                 }
             }
@@ -353,7 +176,7 @@ class BackgroundService : BackgroundServiceMP() {
                 if (res.isNotEmpty()) {
                     c_xy = if (res[0].title.toInt() == 6) {
                         Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                            stop()
+                            bsView.stop()
                         }, 1)
 
                         null
@@ -369,9 +192,9 @@ class BackgroundService : BackgroundServiceMP() {
             }
         }
 
-        if (res != null && res.size >= 1 && rectView != null && rectView.visibility == View.VISIBLE) {
+        if (res != null && res.size >= 1 && bsView.rect_view_visible()) {
             Handler(Looper.getMainLooper()).post(Runnable {
-                (rectView as RectLayout).show(res)
+                bsView.draw_rect_show(res)
             })
         }
 
@@ -386,77 +209,56 @@ class BackgroundService : BackgroundServiceMP() {
     inner class BackgroundThread : Thread() {
 
         override fun run() {
-            while (RUN_BACKGROUND && !RUN_DETECT) {
-                //화면 갱신하게 시간줌. 대화 다나올 시간
-                //Thread.sleep(1000)
-                //image_available 기다리는시간.
-                Thread.sleep(300)
+            while (true) {
+                if (BS_THREAD && !RUN_DETECT){
+                    //화면 갱신하게 시간줌. 대화 다나올 시간
+                    //Thread.sleep(1000)
+                    //image_available 기다리는시간.
+                    Thread.sleep(300)
 
-                var full_path = image_available()
+                    var full_path = image_available()
 
-                if (full_path != null && full_path != "") {
-                    val startTime = SystemClock.uptimeMillis()
-                    RUN_DETECT = true
-                    var arr: FloatArray? = tflite_run(full_path)
-                    RUN_DETECT = false
-                    var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
-                    Log.d("예측-시간", "Inference time: " + lastProcessingTimeMs + "ms")
+                    if (full_path != null && full_path != "") {
+                        val startTime = SystemClock.uptimeMillis()
+                        RUN_DETECT = true
+                        var arr: FloatArray? = tflite_run(full_path)
+                        RUN_DETECT = false
+                        var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+                        Log.d("예측-시간", "Inference time: " + lastProcessingTimeMs + "ms")
 
-                    if (arr != null) {
-                        val x = arr.get(0)
-                        val y = arr.get(1)
+                        if (arr != null) {
+                            val x = arr.get(0)
+                            val y = arr.get(1)
 
-                        // if (!BuildConfig.DEBUG) {
-                        touchService.click(x, y)
-                        // }
+                            // if (!BuildConfig.DEBUG) {
+                            touchService.click(x, y)
+                            // }
 
-                        Handler(Looper.getMainLooper()).post(Runnable {
-                            (effectView as PointLayout).draw(x, y)
-                        })
+                            Handler(Looper.getMainLooper()).post(Runnable {
+                                bsView.draw_effect(x,y)
+                            })
 
-                        //터치후 화면 갱신하게 시간줌.
-                        //Thread.sleep(300)
+                            //터치후 화면 갱신하게 시간줌.
+                            //Thread.sleep(300)
+                        } else {
+
+                        }
                     } else {
-
+                        RUN_DETECT = false
                     }
-                } else {
-
                 }
+
+
             }
         }
 
     }
 
-    fun move(view: View, event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_MOVE -> {
-                val rawX: Float = event.rawX // 절대 X 좌표 값을 가져온다.
-                val rawY: Float = event.rawY // 절대 Y 좌표값을 가져온다.
-
-                // 이동한 위치에서 처음 위치를 빼서 이동한 거리를 구한다.
-                val x: Float = rawX - prevX
-                val y: Float = rawY - prevY
-                setCoordinateUpdate(x, y)
-                prevX = rawX
-                prevY = rawY
-            }
-        }
-        return false
-    }
-
-    private fun setCoordinateUpdate(x: Float, y: Float) {
-        if (window_params != null) {
-            window_params.x += x.toInt()
-            window_params.y += y.toInt()
-            manager.updateViewLayout(onTopView, window_params)
-        }
-    }
 
 
     override fun onDestroy() {
-        stop()
-        manager.removeView(onTopView)
-        manager.removeView(effectView)
+        bsView.stop()
+        bsView.destroy()
         orientationChangeCallback.disable()
         virtualDisplay = null
         mediaProjection?.stop()

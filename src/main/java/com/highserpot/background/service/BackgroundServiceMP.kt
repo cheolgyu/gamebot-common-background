@@ -23,10 +23,10 @@ import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.tf.tflite.Run
 
-
+@JvmField var BS_THREAD = false
+@JvmField var RUN_DETECT = false
 abstract class BackgroundServiceMP : Service() {
-    var RUN_DETECT = false
-    var RUN_BACKGROUND = false
+
     var my_data: Intent? = null
     var my_resultCode: Int? = null
     lateinit var orientationChangeCallback: OrientationChangeCallback
