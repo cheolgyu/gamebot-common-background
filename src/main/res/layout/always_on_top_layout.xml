@@ -8,53 +8,124 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginHorizontal="3dp"
+                >
             <ImageView
                 android:id="@+id/btn_on_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@drawable/icon_topview" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="320dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                >
+            <com.google.android.gms.ads.AdView
+
+                android:id="@+id/always_on_top_adview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/ad_banner" />
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/area_on_off"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <Switch
-                android:id="@+id/btn_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:showText="true"
-                android:switchMinWidth="100dp"
-                android:textOff="@string/over_stop_txt"
-                android:textOn="@string/over_start_txt"
-                android:textStyle="bold"
-                android:theme="@style/CustomAppTheme" />
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stretchColumns="1">
 
-            <Switch
-                android:id="@+id/rect_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:showText="true"
-                android:switchMinWidth="100dp"
-                android:textOff="@string/rect_layout_stop_txt"
-                android:textOn="@string/rect_layout_start_txt"
-                android:textStyle="bold"
-                android:theme="@style/CustomAppTheme"
+                <TableRow >
 
-                />
+                    <TextView
+                        android:padding="3dip"
+                        android:text="시작"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/btn_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:showText="true"
+                        android:switchMinWidth="100dp"
+                        android:textOff="@string/over_stop_txt"
+                        android:textOn="@string/over_start_txt"
+                        android:textStyle="bold"
+                        android:theme="@style/CustomAppTheme" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:padding="3dip"
+                        android:text="박스"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/rect_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:showText="true"
+                        android:switchMinWidth="100dp"
+                        android:textOff="@string/rect_layout_stop_txt"
+                        android:textOn="@string/rect_layout_start_txt"
+                        android:textStyle="bold"
+                        android:theme="@style/CustomAppTheme" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:padding="3dip"
+                        android:text="연습"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/ex_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:showText="true"
+                        android:switchMinWidth="100dp"
+                        android:textOff="@string/rect_layout_stop_txt"
+                        android:textOn="@string/rect_layout_start_txt"
+                        android:textStyle="bold"
+                        android:theme="@style/CustomAppTheme" />
+
+                </TableRow>
+            </TableLayout>
         </LinearLayout>
-
 
     </LinearLayout>
 
@@ -62,19 +133,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:id="@+id/top_view_banner_layout"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/ex_layout"
+        android:visibility="gone"
+        >
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/always_on_top_adview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/ad_banner" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/video_5_00000334"
 
+            />
     </LinearLayout>
 
 

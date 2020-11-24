@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
+import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -23,6 +24,7 @@ class BackgroundServiceView(var ctx: Context) {
     lateinit var rectView: View
     lateinit var window_params: WindowManager.LayoutParams
     lateinit var window_params_effect: WindowManager.LayoutParams
+    lateinit var ex_switch: Switch
     lateinit var btn_switch: Switch
     lateinit var btn_on_off: ImageView
     lateinit var area_on_off: LinearLayout
@@ -60,11 +62,13 @@ class BackgroundServiceView(var ctx: Context) {
     fun start() {
         btn_switch.isChecked = true
         rect_switch.isChecked = true
+        ex_switch.isChecked = false
     }
 
     fun stop() {
         btn_switch.isChecked = false
         rect_switch.isChecked = false
+        ex_switch.isChecked = false
     }
 
     fun destroy() {
@@ -119,16 +123,36 @@ class BackgroundServiceView(var ctx: Context) {
     }
 
     fun listener_load_view() {
+
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
         btn_on_off.setOnClickListener {
             if (area_on_off.visibility == View.VISIBLE) {
                 area_on_off.visibility = View.GONE
+                DrawableCompat.setTint(btn_on_off.drawable,ctx.getColor(R.color.ic_launcher_background))
             } else {
                 area_on_off.visibility = View.VISIBLE
+                DrawableCompat.setTint(btn_on_off.drawable,ctx.getColor(R.color.browser_actions_title_color))
             }
         }
+        var ex_layouut: LinearLayout = onTopView.findViewById(R.id.ex_layout)
+        ex_switch = onTopView.findViewById(R.id.ex_switch)
+        ex_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(
+                buttonView: CompoundButton,
+                isChecked: Boolean
+            ) {
+
+                if (isChecked) {
+                    btn_on_off.performClick()
+                    ex_layouut.visibility = LinearLayout.VISIBLE
+                } else {
+                    ex_layouut.visibility = LinearLayout.GONE
+
+                }
+            }
+        })
 
         btn_switch = onTopView.findViewById(R.id.btn_switch)
         btn_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
