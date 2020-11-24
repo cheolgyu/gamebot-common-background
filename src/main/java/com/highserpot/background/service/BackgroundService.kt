@@ -231,7 +231,9 @@ class BackgroundService : BackgroundServiceMP() {
                             val y = arr.get(1)
 
                             // if (!BuildConfig.DEBUG) {
-                            touchService.click(x, y)
+                            if (!bsView.tv_RectF.contains(x, y)) {
+                                touchService.click(x, y)
+                            }
                             // }
 
                             Handler(Looper.getMainLooper()).post(Runnable {
