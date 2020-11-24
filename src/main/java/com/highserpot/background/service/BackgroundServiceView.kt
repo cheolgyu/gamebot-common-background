@@ -207,16 +207,22 @@ class BackgroundServiceView(var ctx: Context) {
 
     fun move(view: View, event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_MOVE -> {
-                val rawX: Float = event.rawX // 절대 X 좌표 값을 가져온다.
-                val rawY: Float = event.rawY // 절대 Y 좌표값을 가져온다.
+            MotionEvent.ACTION_DOWN -> {
+                prevX = event.getRawX()
+                prevY = event.getRawY()
+            }
 
-                // 이동한 위치에서 처음 위치를 빼서 이동한 거리를 구한다.
+            MotionEvent.ACTION_MOVE
+            -> {
+                val rawX: Float = event.getRawX()
+                val rawY: Float = event.getRawY()
+
                 val x: Float = rawX - prevX
                 val y: Float = rawY - prevY
                 setCoordinateUpdate(x, y)
                 prevX = rawX
                 prevY = rawY
+                Log.d("탑뷰-좌표", "x=${prevX}, y=${prevY}")
             }
         }
         return false
