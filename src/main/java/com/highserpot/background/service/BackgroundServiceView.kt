@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.RectF
 import android.util.Log
 import android.view.*
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -31,6 +32,7 @@ class BackgroundServiceView(var ctx: Context) {
 
     var prevX = 0f
     var prevY = 0f
+    var tv_RectF: RectF = RectF()
 
     init {
         utils = Utils(ctx)
@@ -106,6 +108,14 @@ class BackgroundServiceView(var ctx: Context) {
 
         load_admob()
         listener_load_view()
+
+        onTopView.getViewTreeObserver().addOnGlobalLayoutListener(OnGlobalLayoutListener {
+            val point = IntArray(2)
+            btn_on_off.getLocationOnScreen(point) // or getLocationInWindow(point)
+            val (x, y) = point
+            tv_update(x.toFloat(), y.toFloat())
+        })
+
     }
 
     fun listener_load_view() {
@@ -158,11 +168,9 @@ class BackgroundServiceView(var ctx: Context) {
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
-                    //buttonView.text = applicationContext.getString(R.string.rect_layout_start_txt)
                     rectView.visibility = View.VISIBLE
                 } else {
                     buttonView.setTextColor(Color.BLACK)
-                    //buttonView.text = applicationContext.getString(R.string.rect_layout_stop_txt)
                     rectView.visibility = View.INVISIBLE
                 }
             }
@@ -222,16 +230,27 @@ class BackgroundServiceView(var ctx: Context) {
                 setCoordinateUpdate(x, y)
                 prevX = rawX
                 prevY = rawY
-                Log.d("탑뷰-좌표", "x=${prevX}, y=${prevY}")
+
+
+                tv_update(prevX, prevY)
             }
         }
         return false
+    }
+
+    fun tv_update(x: Float, y: Float) {
+        Log.d(
+            "탑뷰-좌표",
+            "x=${x}, y=${y}, w=${onTopView.width}, h=${onTopView.height}"
+        )
+        tv_RectF = RectF(prevX, prevY, prevX + onTopView.width, prevY + onTopView.height)
     }
 
     private fun setCoordinateUpdate(x: Float, y: Float) {
         if (window_params != null) {
             window_params.x += x.toInt()
             window_params.y += y.toInt()
+
             manager.updateViewLayout(onTopView, window_params)
         }
     }
