@@ -14,6 +14,7 @@
     <string name="start_txt">시작하기</string>
     <string name="exit_txt">종료하기</string>
     <string name="danger_txt">경고</string>
+    <string name="sample_txt">샘플</string>
     <string name="over_start_txt">실행</string>
     <string name="over_stop_txt">정지</string>
     <string name="rect_layout_start_txt">보임</string>

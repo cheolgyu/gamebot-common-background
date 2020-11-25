@@ -35,6 +35,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.highserpot.background.SampleActivity">
+        </activity>
+
     </application>
 
 

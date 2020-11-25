@@ -104,47 +104,12 @@
 
                 </TableRow>
 
-                <TableRow>
 
-                    <TextView
-                        android:padding="3dip"
-                        android:text="연습"
-                        android:textStyle="bold" />
-
-                    <Switch
-                        android:id="@+id/ex_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:showText="true"
-                        android:switchMinWidth="100dp"
-                        android:textOff="@string/rect_layout_stop_txt"
-                        android:textOn="@string/rect_layout_start_txt"
-                        android:textStyle="bold"
-                        android:theme="@style/CustomAppTheme" />
-
-                </TableRow>
             </TableLayout>
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:id="@+id/ex_layout"
-        android:visibility="gone"
-        >
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/video_5_00000334"
-
-            />
-    </LinearLayout>
 
 
 </LinearLayout>

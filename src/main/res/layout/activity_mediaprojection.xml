@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="313dp"
+        android:layout_width="381dp"
         android:layout_height="39dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +35,7 @@
             android:id="@+id/stop_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:onClick="service_stop_btn"
             android:text="@string/exit_txt"
             app:layout_constraintStart_toEndOf="@+id/button2"
@@ -47,13 +47,26 @@
             android:id="@+id/danger"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
+            android:layout_marginStart="4dp"
             android:onClick="danger_click"
             android:text="@string/danger_txt"
             app:layout_constraintStart_toEndOf="@+id/stop_btn"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_conversion_absoluteHeight="48dp"
             tools:layout_conversion_absoluteWidth="88dp" />
+
+        <Button
+            android:id="@+id/smaple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:onClick="sample_click"
+            android:text="@string/sample_txt"
+            app:layout_constraintStart_toEndOf="@+id/danger"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="48dp"
+            tools:layout_conversion_absoluteWidth="88dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

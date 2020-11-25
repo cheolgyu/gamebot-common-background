@@ -99,4 +99,9 @@ open class MediaProjectionActivity : AppCompatActivity() {
         CheckTouch(this).alert_dialog()
     }
 
+    fun sample_click(view: View?) {
+        var intent =  Intent(applicationContext,SampleActivity::class.java)
+        startActivity(intent)
+    }
+
 }
