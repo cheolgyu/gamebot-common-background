@@ -61,7 +61,11 @@ open class MediaProjectionActivity : AppCompatActivity() {
                 var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
                 startActivityForResult(captureIntent, 1000)
             } else {
-                Toast.makeText(applicationContext, getString(R.string.accessibility_service_description), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.accessibility_service_description),
+                    Toast.LENGTH_SHORT
+                ).show()
 
             }
         } else {
@@ -81,7 +85,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
 
     open fun onObtainingPermissionOverlayWindow() {
         Log.d(
-            "탑뷰","권한"
+            "탑뷰", "권한"
 
         )
         val intent = Intent(

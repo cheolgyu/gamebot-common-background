@@ -59,7 +59,7 @@ class BackgroundService : BackgroundServiceMP() {
 
     @Throws(Exception::class)
     fun image_available(): String? {
-        var image = imageReader!!.acquireNextImage()
+        var image = imageReader?.acquireNextImage()
         if (image != null) {
             var fos: FileOutputStream? = null
             val planes: Array<Image.Plane> = image.planes
