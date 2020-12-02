@@ -1,0 +1,5 @@
+package com.highserpot.background.store
+
+enum class ScreenStatus {
+    MODE_BASIC,MODE_POWER_SAVE,BAG_BASIC,BAG_DISSASSEMBLE_ACTIVE,BAG_DISSASSEMBLE_SELECT,BAG_DISSASSEMBLE_RESULT
+}

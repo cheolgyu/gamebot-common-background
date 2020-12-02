@@ -112,6 +112,22 @@ class BackgroundService : BackgroundServiceMP() {
 
 
         var c_xy: FloatArray? = null
+
+        Log.d("예측정리", res.toString())
+
+        //if (!BuildConfig.DEBUG) {
+        utils.rm_full_path(full_path)
+        //}
+        return c_xy
+    }
+
+
+    fun tflite_run_old(full_path: String): FloatArray?{
+        detect_run.build(mWidth, mHeight)
+        var res = detect_run.get_results(full_path)
+
+
+        var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
             c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
         }
