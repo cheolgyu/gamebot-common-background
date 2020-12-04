@@ -97,7 +97,7 @@ class BackgroundService : BackgroundServiceMP() {
             val file_id = System.currentTimeMillis()
             var my_file = STORE_DIRECTORY + file_id + ".jpg"
             fos =
-                FileOutputStream(my_file)
+                    FileOutputStream(my_file)
             bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fos)
             fos.close()
 
@@ -132,7 +132,7 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
 
-    fun tflite_run_old(full_path: String): FloatArray?{
+    fun tflite_run_old(full_path: String): FloatArray? {
         detect_run.build(mWidth, mHeight)
         var res = detect_run.get_results(full_path)
 
@@ -259,12 +259,14 @@ class BackgroundService : BackgroundServiceMP() {
                             // if (!BuildConfig.DEBUG) {
                             if (!bsView.tv_RectF.contains(x, y)) {
                                 touchService.click(x, y)
+                                Handler(Looper.getMainLooper()).post(Runnable {
+                                    bsView.draw_effect(x, y)
+                                })
+                            } else {
+                                Log.d("탑뷰-좌표", "광고영역에 들어왔습니다.")
                             }
                             // }
 
-                            Handler(Looper.getMainLooper()).post(Runnable {
-                                bsView.draw_effect(x, y)
-                            })
 
                             //터치후 화면 갱신하게 시간줌.
                             //Thread.sleep(300)

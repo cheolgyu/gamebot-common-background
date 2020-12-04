@@ -13,38 +13,38 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:gravity="center"
-            >
+            android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center"
                 android:layout_marginHorizontal="3dp"
-                >
-            <ImageView
-                android:id="@+id/btn_on_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/icon_topview" />
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_on_off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon_topview" />
             </LinearLayout>
-            <LinearLayout
+
+            <LinearLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:layout_width="320dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:gravity="center"
-                xmlns:ads="http://schemas.android.com/apk/res-auto"
-                >
-            <com.google.android.gms.ads.AdView
+                android:orientation="horizontal">
 
-                android:id="@+id/always_on_top_adview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                ads:adSize="BANNER"
-                ads:adUnitId="@string/ad_banner" />
+                <com.google.android.gms.ads.AdView
+
+                    android:id="@+id/always_on_top_adview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="@string/ad_banner" />
             </LinearLayout>
 
         </LinearLayout>
@@ -62,7 +62,7 @@
                 android:layout_height="match_parent"
                 android:stretchColumns="1">
 
-                <TableRow >
+                <TableRow>
 
                     <TextView
                         android:padding="3dip"
@@ -109,7 +109,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </LinearLayout>
