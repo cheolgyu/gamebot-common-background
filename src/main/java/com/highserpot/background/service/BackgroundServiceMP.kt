@@ -26,14 +26,19 @@ import com.highserpot.background.R
 import com.highserpot.tf.tflite.Run
 
 
-@JvmField var BS_THREAD = false
-@JvmField var RUN_DETECT = false
+@JvmField
+var BS_THREAD = false
+
+@JvmField
+var RUN_DETECT = false
+
 abstract class BackgroundServiceMP : Service() {
 
     val BCAST_CONFIGCHANGED = "android.intent.action.CONFIGURATION_CHANGED"
     var my_data: Intent? = null
     var my_resultCode: Int? = null
     lateinit var orientationChangeCallback: OrientationChangeCallback
+
     //display
     var mWidth = 0
     var mHeight = 0
@@ -44,7 +49,7 @@ abstract class BackgroundServiceMP : Service() {
     var mProjectionStopped = true
     val SCREENCAP_NAME = "screencap"
     val VIRTUAL_DISPLAY_FLAGS =
-        DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
     var mHandler: Handler? = null
     var virtualDisplay: VirtualDisplay? = null
     var mediaProjection: MediaProjection? = null
@@ -52,9 +57,9 @@ abstract class BackgroundServiceMP : Service() {
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
 
-    lateinit var detect_run : Run
+    lateinit var detect_run: Run
 
-    fun createModel(){
+    fun createModel() {
         val so = getScreenOrientation()
         detect_run = Run(applicationContext)
         detect_run.init()
@@ -73,10 +78,10 @@ abstract class BackgroundServiceMP : Service() {
 
     fun createVirtualDisplay() {
         mediaProjection =
-            mediaProjectionManager.getMediaProjection(
-                    my_resultCode!!,
-                    my_data!!
-            )
+                mediaProjectionManager.getMediaProjection(
+                        my_resultCode!!,
+                        my_data!!
+                )
 
         // start capture handling thread
         object : Thread() {
@@ -143,7 +148,7 @@ abstract class BackgroundServiceMP : Service() {
         )
     }
 
-    fun orientationEventListener(){
+    fun orientationEventListener() {
         Log.d("회전", "onOrientationChanged")
         val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = wm.defaultDisplay
@@ -178,7 +183,7 @@ abstract class BackgroundServiceMP : Service() {
     inner class OrientationChangeCallback internal constructor(
 
     ) :
-        OrientationEventListener(applicationContext) {
+            OrientationEventListener(applicationContext) {
         override fun onOrientationChanged(orientation: Int) {
             orientationEventListener()
         }
