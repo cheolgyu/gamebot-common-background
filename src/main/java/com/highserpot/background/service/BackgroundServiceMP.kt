@@ -2,9 +2,10 @@ package com.highserpot.background.service
 
 import android.annotation.SuppressLint
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Canvas
+import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.hardware.display.DisplayManager
@@ -16,6 +17,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 import android.view.WindowManager
@@ -23,10 +25,12 @@ import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.tf.tflite.Run
 
+
 @JvmField var BS_THREAD = false
 @JvmField var RUN_DETECT = false
 abstract class BackgroundServiceMP : Service() {
 
+    val BCAST_CONFIGCHANGED = "android.intent.action.CONFIGURATION_CHANGED"
     var my_data: Intent? = null
     var my_resultCode: Int? = null
     lateinit var orientationChangeCallback: OrientationChangeCallback
@@ -70,8 +74,8 @@ abstract class BackgroundServiceMP : Service() {
     fun createVirtualDisplay() {
         mediaProjection =
             mediaProjectionManager.getMediaProjection(
-                my_resultCode!!,
-                my_data!!
+                    my_resultCode!!,
+                    my_data!!
             )
 
         // start capture handling thread
@@ -98,14 +102,14 @@ abstract class BackgroundServiceMP : Service() {
         make_image_reader()
 
         var vd = mediaProjection!!.createVirtualDisplay(
-            SCREENCAP_NAME,
-            mWidth,
-            mHeight,
-            mDensity,
-            VIRTUAL_DISPLAY_FLAGS,
-            imageReader!!.surface,
-            null,
-            mHandler
+                SCREENCAP_NAME,
+                mWidth,
+                mHeight,
+                mDensity,
+                VIRTUAL_DISPLAY_FLAGS,
+                imageReader!!.surface,
+                null,
+                mHandler
         )
 
         return vd
@@ -132,11 +136,43 @@ abstract class BackgroundServiceMP : Service() {
     fun make_image_reader() {
         // start capture reader
         imageReader = ImageReader.newInstance(
-            mWidth,
-            mHeight,
-            PixelFormat.RGBA_8888,
-            1
+                mWidth,
+                mHeight,
+                PixelFormat.RGBA_8888,
+                1
         )
+    }
+
+    fun orientationEventListener(){
+        Log.d("회전", "onOrientationChanged")
+        val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val rotation: Int = display.rotation
+
+        if (mRotation != rotation) {
+            Toast.makeText(
+                    applicationContext,
+                    applicationContext.getString(R.string.app_orientation_changed_start),
+                    Toast.LENGTH_SHORT
+            ).show()
+
+            if (virtualDisplay != null) {
+                virtualDisplay!!.release()
+            }
+            if (imageReader != null) {
+                imageReader!!.setOnImageAvailableListener(null, null)
+            }
+            if (!mProjectionStopped) {
+                mProjectionStopped = false
+                virtualDisplay = get_virtualDisplay()!!
+            }
+            Thread.sleep(100)
+            Toast.makeText(
+                    applicationContext,
+                    applicationContext.getString(R.string.app_orientation_changed_stop),
+                    Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     inner class OrientationChangeCallback internal constructor(
@@ -144,36 +180,7 @@ abstract class BackgroundServiceMP : Service() {
     ) :
         OrientationEventListener(applicationContext) {
         override fun onOrientationChanged(orientation: Int) {
-
-            val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val display = wm.defaultDisplay
-            val rotation: Int = display.rotation
-
-            if (mRotation != rotation) {
-                Toast.makeText(
-                    applicationContext,
-                    applicationContext.getString(R.string.app_orientation_changed_start),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                if (virtualDisplay != null) {
-                    virtualDisplay!!.release()
-                }
-                if (imageReader != null) {
-                    imageReader!!.setOnImageAvailableListener(null, null)
-                }
-                if (!mProjectionStopped) {
-                    mProjectionStopped = false
-                    virtualDisplay = get_virtualDisplay()!!
-                }
-                Thread.sleep(100)
-                Toast.makeText(
-                    applicationContext,
-                    applicationContext.getString(R.string.app_orientation_changed_stop),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
+            orientationEventListener()
         }
 
 
@@ -183,6 +190,20 @@ abstract class BackgroundServiceMP : Service() {
         TODO("Not yet implemented")
     }
 
-
+    var mBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, myIntent: Intent) {
+            if (myIntent.action == BCAST_CONFIGCHANGED) {
+                Log.d("회전-브로드캐스트", "received->$BCAST_CONFIGCHANGED")
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    // it's Landscape
+                    Log.d("회전-브로드캐스트", "LANDSCAPE")
+                    orientationEventListener()
+                } else {
+                    Log.d("회전-브로드캐스트", "PORTRAIT")
+                    orientationEventListener()
+                }
+            }
+        }
+    }
 }
 

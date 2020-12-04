@@ -2,6 +2,7 @@ package com.highserpot.background.service
 
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.media.Image
@@ -9,7 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.widget.*
+import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.notification.Noti
@@ -36,7 +37,9 @@ class BackgroundService : BackgroundServiceMP() {
         run_notify()
         ready_media()
         bsView = BackgroundServiceView(applicationContext)
-
+        val filter = IntentFilter()
+        filter.addAction(BCAST_CONFIGCHANGED)
+        this.applicationContext.registerReceiver(mBroadcastReceiver, filter);
 
     }
 
@@ -73,15 +76,15 @@ class BackgroundService : BackgroundServiceMP() {
             var bitmap: Bitmap? = null
             try {
                 bitmap = Bitmap.createBitmap(
-                    w,//+ rowPadding / pixelStride,
-                    mHeight,
-                    Bitmap.Config.ARGB_8888
+                        w,//+ rowPadding / pixelStride,
+                        mHeight,
+                        Bitmap.Config.ARGB_8888
                 )
                 bitmap.copyPixelsFromBuffer(buffer)
             } catch (e: Exception) {
                 Log.e(
-                    "---",
-                    e.printStackTrace().toString()
+                        "---",
+                        e.printStackTrace().toString()
                 )
             } finally {
                 image.close()
@@ -113,7 +116,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
-            c_xy = utils.click_xy( res[0].getLocation())
+            c_xy = utils.click_xy(res[0].getLocation())
         }
         Log.d("예측정리", res.toString())
 
@@ -136,7 +139,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
-            c_xy = utils.click_xy( res[0].getLocation())
+            c_xy = utils.click_xy(res[0].getLocation())
         }
 
         when (applicationContext.packageName) {
@@ -145,7 +148,7 @@ class BackgroundService : BackgroundServiceMP() {
                     c_xy = if (res[0].title.toInt() == 1) {
                         null
                     } else {
-                        utils.click_xy( res[0].getLocation())
+                        utils.click_xy(res[0].getLocation())
                     }
                 }
             }
@@ -172,7 +175,7 @@ class BackgroundService : BackgroundServiceMP() {
                     c_xy = if (res[0].title.toInt() == 4) {
                         res.removeAll { recognition -> recognition.title.toInt() == 4 }
                         if (res.size > 0) {
-                            utils.click_xy( res[0].getLocation())
+                            utils.click_xy(res[0].getLocation())
                         } else {
                             null
                         }
@@ -204,13 +207,13 @@ class BackgroundService : BackgroundServiceMP() {
 
                         null
                     } else {
-                        utils.click_xy( res[0].getLocation())
+                        utils.click_xy(res[0].getLocation())
                     }
                 }
             }
             else -> {
                 if (res.isNotEmpty()) {
-                    c_xy = utils.click_xy( res[0].getLocation())
+                    c_xy = utils.click_xy(res[0].getLocation())
                 }
             }
         }
@@ -281,15 +284,16 @@ class BackgroundService : BackgroundServiceMP() {
 
 
     override fun onDestroy() {
+        this.applicationContext.unregisterReceiver(mBroadcastReceiver);
         bsView.stop()
         bsView.destroy()
         orientationChangeCallback.disable()
-        virtualDisplay = null
+        virtualDisplay?.release()
         mediaProjection?.stop()
         Toast.makeText(
-            this,
-            applicationContext.getString(R.string.app_service_stop),
-            Toast.LENGTH_SHORT
+                this,
+                applicationContext.getString(R.string.app_service_stop),
+                Toast.LENGTH_SHORT
         ).show()
     }
 
