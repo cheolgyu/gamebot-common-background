@@ -171,7 +171,7 @@ abstract class BackgroundServiceMP : Service() {
                 mProjectionStopped = false
                 virtualDisplay = get_virtualDisplay()!!
             }
-            Thread.sleep(100)
+            //Thread.sleep(100)
             Toast.makeText(
                     applicationContext,
                     applicationContext.getString(R.string.app_orientation_changed_stop),

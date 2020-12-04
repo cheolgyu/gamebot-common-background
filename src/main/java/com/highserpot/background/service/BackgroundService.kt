@@ -118,7 +118,7 @@ class BackgroundService : BackgroundServiceMP() {
         if (res.isNotEmpty()) {
             c_xy = utils.click_xy(res[0].getLocation())
         }
-        Log.d("예측정리", res.toString())
+        Log.d("클릭 객체", res.toString())
 
         if (res != null && res.size >= 1 && bsView.rect_view_visible()) {
             Handler(Looper.getMainLooper()).post(Runnable {
@@ -240,7 +240,7 @@ class BackgroundService : BackgroundServiceMP() {
                     //화면 갱신하게 시간줌. 대화 다나올 시간
                     //Thread.sleep(1000)
                     //image_available 기다리는시간.
-                    Thread.sleep(300)
+                    //Thread.sleep(300)
 
                     var full_path = image_available()
 

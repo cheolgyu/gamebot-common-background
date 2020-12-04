@@ -80,7 +80,7 @@ class SampleActivity : AppCompatActivity() {
     }
 
     fun load_sample() {
-
+        Log.d(TAG, "load_sample")
 
         var li = assets.list(DIR)
 
