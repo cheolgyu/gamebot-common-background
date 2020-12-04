@@ -51,7 +51,7 @@ class Utils(var context: Context) {
         }
     }
 
-    fun click_xy(label_title: Int, item: RectF): FloatArray? {
+    fun click_xy( item: RectF): FloatArray? {
 
         var x = item.left + ((item.right - item.left) / 2) //+ add_size[0]
         var y = item.top + ((item.bottom - item.top) / 2) //+  add_size[1]

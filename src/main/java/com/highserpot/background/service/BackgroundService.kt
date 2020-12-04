@@ -112,9 +112,16 @@ class BackgroundService : BackgroundServiceMP() {
 
 
         var c_xy: FloatArray? = null
-
+        if (res.isNotEmpty()) {
+            c_xy = utils.click_xy( res[0].getLocation())
+        }
         Log.d("예측정리", res.toString())
 
+        if (res != null && res.size >= 1 && bsView.rect_view_visible()) {
+            Handler(Looper.getMainLooper()).post(Runnable {
+                bsView.draw_rect_show(res)
+            })
+        }
         //if (!BuildConfig.DEBUG) {
         utils.rm_full_path(full_path)
         //}
@@ -129,7 +136,7 @@ class BackgroundService : BackgroundServiceMP() {
 
         var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
-            c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+            c_xy = utils.click_xy( res[0].getLocation())
         }
 
         when (applicationContext.packageName) {
@@ -138,7 +145,7 @@ class BackgroundService : BackgroundServiceMP() {
                     c_xy = if (res[0].title.toInt() == 1) {
                         null
                     } else {
-                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                        utils.click_xy( res[0].getLocation())
                     }
                 }
             }
@@ -156,7 +163,7 @@ class BackgroundService : BackgroundServiceMP() {
                         arr.set(1, y)
                         arr
                     } else {
-                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                        utils.click_xy(res[0].getLocation())
                     }
                 }
             }
@@ -165,12 +172,12 @@ class BackgroundService : BackgroundServiceMP() {
                     c_xy = if (res[0].title.toInt() == 4) {
                         res.removeAll { recognition -> recognition.title.toInt() == 4 }
                         if (res.size > 0) {
-                            utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                            utils.click_xy( res[0].getLocation())
                         } else {
                             null
                         }
                     } else {
-                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                        utils.click_xy(res[0].getLocation())
                     }
                 } else {
                     Log.d("예측결과", "빈값왔다." + mWidth.toString())
@@ -197,13 +204,13 @@ class BackgroundService : BackgroundServiceMP() {
 
                         null
                     } else {
-                        utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                        utils.click_xy( res[0].getLocation())
                     }
                 }
             }
             else -> {
                 if (res.isNotEmpty()) {
-                    c_xy = utils.click_xy(res[0].title.toInt(), res[0].getLocation())
+                    c_xy = utils.click_xy( res[0].getLocation())
                 }
             }
         }

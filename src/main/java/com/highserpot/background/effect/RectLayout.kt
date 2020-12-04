@@ -86,9 +86,7 @@ class RectLayout @JvmOverloads constructor(
     fun show(list: List<Classifier.Recognition>) {
 
         for (item in list) {
-            val id = context.applicationContext.resources.getIdentifier("label_"+item.title, "string", context.applicationContext.packageName)
-            val lable = context.applicationContext.getString(id)
-            make_item(item.getLocation(),lable)
+            make_item(item.getLocation(),item.lb.getString("name"))
         }
     }
 
