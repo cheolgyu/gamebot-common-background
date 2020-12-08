@@ -120,10 +120,19 @@ class BackgroundService : BackgroundServiceMP() {
         }
         Log.d("클릭 객체", res.toString())
 
-        if (res != null && res.size >= 1 && bsView.rect_view_visible()) {
+        if (res.isNotEmpty() && bsView.rect_view_visible()) {
             Handler(Looper.getMainLooper()).post(Runnable {
                 bsView.draw_rect_show(res)
             })
+        }
+
+        if(res.isNotEmpty()  ){
+            if (!res[0].click){
+                return null
+            }
+            if (!res[0].lb.getBoolean("click_object")){
+                return null
+            }
         }
         //if (!BuildConfig.DEBUG) {
         utils.rm_full_path(full_path)
