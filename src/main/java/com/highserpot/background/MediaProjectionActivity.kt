@@ -63,7 +63,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     applicationContext,
-                    getString(R.string.accessibility_service_description),
+                    getString(R.string.accessibility_service_description_need),
                     Toast.LENGTH_SHORT
                 ).show()
 

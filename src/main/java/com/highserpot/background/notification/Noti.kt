@@ -40,7 +40,7 @@ class Noti(val _context: Context) {
     fun build(
         notificationId: Int,
         title: String = _context.getString(R.string.accessibility_service_label),
-        text: String = _context.getString(R.string.accessibility_service_description)
+        text: String = _context.getString(R.string.accessibility_service_description_noti)
     ): Notification {
 
         val notificationIntent = Intent(_context, MediaProjectionActivity::class.java)

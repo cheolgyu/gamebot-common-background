@@ -10,7 +10,9 @@
     <string name="channel_name">스톤에이지월드 하자</string>
     <string name="channel_description">스톤에이지월드 하자</string>
     <string name="accessibility_service_label">스톤에이지월드 하자</string>
-    <string name="accessibility_service_description">클릭권한을 주세요.</string>
+    <string name="accessibility_service_description_need">클릭권한이 필요합니다.</string>
+    <string name="accessibility_service_description_noti">종료하기.</string>
+    <string name="accessibility_service_description_xml">클릭권한을 사용합니다.</string>
     <string name="start_txt">시작하기</string>
     <string name="exit_txt">종료하기</string>
     <string name="danger_txt">경고</string>
