@@ -4,7 +4,6 @@ package com.highserpot.background.service
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.graphics.RectF
 import android.media.Image
 import android.os.Handler
 import android.os.Looper
@@ -14,7 +13,6 @@ import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.notification.Noti
-import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
 
@@ -26,11 +24,12 @@ class BackgroundService : BackgroundServiceMP() {
     lateinit var utils: Utils
     lateinit var bsView: BackgroundServiceView
     lateinit var bsThread: BackgroundThread
+    val TAG: String = this.javaClass.simpleName
 
     override fun onCreate() {
+        Log.d(TAG, "=============start===================")
         utils = Utils(this.applicationContext)
 
-        BS_THREAD = true
         bsThread = BackgroundThread()
         bsThread!!.start()
 
@@ -40,7 +39,7 @@ class BackgroundService : BackgroundServiceMP() {
         val filter = IntentFilter()
         filter.addAction(BCAST_CONFIGCHANGED)
         this.applicationContext.registerReceiver(mBroadcastReceiver, filter);
-
+        BS_THREAD = true
     }
 
     @Throws(java.lang.Exception::class)
@@ -52,6 +51,7 @@ class BackgroundService : BackgroundServiceMP() {
 
             createVirtualDisplay()
             createModel()
+            detect_run.build(mWidth, mHeight)
             bsView.start()
 
         }
@@ -60,58 +60,37 @@ class BackgroundService : BackgroundServiceMP() {
         return START_STICKY
     }
 
-    @Throws(Exception::class)
-    fun image_available(): String? {
+    fun image_available_bitmap(): Bitmap? {
         var image = imageReader?.acquireNextImage()
         if (image != null) {
-            var fos: FileOutputStream? = null
             val planes: Array<Image.Plane> = image.planes
+
+
             val buffer: ByteBuffer = planes[0].buffer
             val pixelStride: Int = planes[0].pixelStride
             val rowStride: Int = planes[0].rowStride
             val rowPadding: Int = rowStride - pixelStride * mWidth
 
-            var w: Int = mWidth + rowPadding / pixelStride
+            val w: Int = mWidth + rowPadding / pixelStride
 
             var bitmap: Bitmap? = null
-            try {
-                bitmap = Bitmap.createBitmap(
-                        w,//+ rowPadding / pixelStride,
-                        mHeight,
-                        Bitmap.Config.ARGB_8888
-                )
-                bitmap.copyPixelsFromBuffer(buffer)
-            } catch (e: Exception) {
-                Log.e(
-                        "---",
-                        e.printStackTrace().toString()
-                )
-            } finally {
-                image.close()
-            }
-
-
-            // write bitmap to a file
-
-            // write bitmap to a file
-            val file_id = System.currentTimeMillis()
-            var my_file = STORE_DIRECTORY + file_id + ".jpg"
-            fos =
-                    FileOutputStream(my_file)
-            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-            fos.close()
-
-            return my_file
+            bitmap = Bitmap.createBitmap(
+                w,//+ rowPadding / pixelStride,
+                mHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            bitmap.copyPixelsFromBuffer(buffer)
+            image.close()
+            return bitmap
 
         }
 
         return null
     }
 
-    fun tflite_run(full_path: String): FloatArray? {
+    fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
 
-        detect_run.build(mWidth, mHeight)
-        var res = detect_run.get_results(full_path)
+        val res = detect_run.get_results_bitmap(bitmap)
 
 
         var c_xy: FloatArray? = null
@@ -126,118 +105,15 @@ class BackgroundService : BackgroundServiceMP() {
             })
         }
 
-        if(res.isNotEmpty()  ){
-            if (!res[0].click){
-                return null
-            }
-            if (!res[0].lb.getBoolean("click_object")){
-                return null
-            }
-        }
-        //if (!BuildConfig.DEBUG) {
-        utils.rm_full_path(full_path)
-        //}
-        return c_xy
-    }
-
-
-    fun tflite_run_old(full_path: String): FloatArray? {
-        detect_run.build(mWidth, mHeight)
-        var res = detect_run.get_results(full_path)
-
-
-        var c_xy: FloatArray? = null
         if (res.isNotEmpty()) {
-            c_xy = utils.click_xy(res[0].getLocation())
-        }
-
-        when (applicationContext.packageName) {
-            "com.highserpot.baram" -> {
-                if (res.isNotEmpty()) {
-                    c_xy = if (res[0].title.toInt() == 1) {
-                        null
-                    } else {
-                        utils.click_xy(res[0].getLocation())
-                    }
-                }
+            if (!res[0].click) {
+                return null
             }
-            "com.highserpot.v4" -> {
-                if (res.isNotEmpty()) {
-                    c_xy = if (res[0].title.toInt() == 1) {
-                        null
-                    } else if (res[0].title.toInt() == 4) {
-                        var arr = FloatArray(2)
-
-                        val item = res[0].getLocation()
-                        val x = item.left + (item.right - item.left) / 2
-                        val y = item.bottom
-                        arr.set(0, x)
-                        arr.set(1, y)
-                        arr
-                    } else {
-                        utils.click_xy(res[0].getLocation())
-                    }
-                }
-            }
-            "com.highserpot.gotgl" -> {
-                if (res.isNotEmpty()) {
-                    c_xy = if (res[0].title.toInt() == 4) {
-                        res.removeAll { recognition -> recognition.title.toInt() == 4 }
-                        if (res.size > 0) {
-                            utils.click_xy(res[0].getLocation())
-                        } else {
-                            null
-                        }
-                    } else {
-                        utils.click_xy(res[0].getLocation())
-                    }
-                } else {
-                    Log.d("예측결과", "빈값왔다." + mWidth.toString())
-                    val px: Float = (mWidth - 10).toFloat()
-                    val py: Float = ((mHeight / 2)).toFloat()
-                    val p_lb = RectF((mWidth / 2).toFloat(), (mHeight / 2).toFloat(), 1F, 1F)
-                    val label = getString(R.string.wakeup)
-                    c_xy = FloatArray(2).apply {
-                        set(0, px)
-                        set(1, py)
-                    }
-
-                    Handler(Looper.getMainLooper()).post(Runnable {
-                        bsView.draw_rect(p_lb, label)
-                    })
-                }
-            }
-            "com.highserpot.illusionc" -> {
-                if (res.isNotEmpty()) {
-                    c_xy = if (res[0].title.toInt() == 6) {
-                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                            bsView.stop()
-                        }, 1)
-
-                        null
-                    } else {
-                        utils.click_xy(res[0].getLocation())
-                    }
-                }
-            }
-            else -> {
-                if (res.isNotEmpty()) {
-                    c_xy = utils.click_xy(res[0].getLocation())
-                }
+            if (!res[0].lb.getBoolean("click_object")) {
+                return null
             }
         }
 
-        if (res != null && res.size >= 1 && bsView.rect_view_visible()) {
-            Handler(Looper.getMainLooper()).post(Runnable {
-                bsView.draw_rect_show(res)
-            })
-        }
-
-        Log.d("예측정리", res.toString())
-
-        //if (!BuildConfig.DEBUG) {
-        utils.rm_full_path(full_path)
-        //}
         return c_xy
     }
 
@@ -246,26 +122,27 @@ class BackgroundService : BackgroundServiceMP() {
         override fun run() {
             while (true) {
                 if (BS_THREAD && !RUN_DETECT) {
-                    //화면 갱신하게 시간줌. 대화 다나올 시간
-                    //Thread.sleep(1000)
-                    //image_available 기다리는시간.
-                    //Thread.sleep(300)
 
-                    var full_path = image_available()
 
-                    if (full_path != null && full_path != "") {
+                    val startTime = SystemClock.uptimeMillis()
+                    val bitmap = image_available_bitmap()
+                    val lastProcessingTimeMs_bitmap = SystemClock.uptimeMillis() - startTime
+
+
+
+                    if (bitmap != null) {
                         val startTime = SystemClock.uptimeMillis()
                         RUN_DETECT = true
-                        var arr: FloatArray? = tflite_run(full_path)
+                        var arr: FloatArray? = tflite_bitmap(bitmap)
                         RUN_DETECT = false
                         var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
-                        Log.d("예측-시간", "Inference time: " + lastProcessingTimeMs + "ms")
+                        Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_bitmap + "ms")
+                        Log.d("시간", "tflite_run:  : " + lastProcessingTimeMs + "ms")
 
                         if (arr != null) {
                             val x = arr.get(0)
                             val y = arr.get(1)
 
-                            // if (!BuildConfig.DEBUG) {
                             if (!bsView.tv_RectF.contains(x, y)) {
                                 touchService.click(x, y)
                                 Handler(Looper.getMainLooper()).post(Runnable {
@@ -274,11 +151,7 @@ class BackgroundService : BackgroundServiceMP() {
                             } else {
                                 Log.d("탑뷰-좌표", "광고영역에 들어왔습니다.")
                             }
-                            // }
 
-
-                            //터치후 화면 갱신하게 시간줌.
-                            //Thread.sleep(300)
                         } else {
 
                         }
@@ -295,6 +168,7 @@ class BackgroundService : BackgroundServiceMP() {
 
 
     override fun onDestroy() {
+        Log.d(TAG, "=============onDestroy===================")
         this.applicationContext.unregisterReceiver(mBroadcastReceiver);
         bsView.stop()
         bsView.destroy()
@@ -302,9 +176,9 @@ class BackgroundService : BackgroundServiceMP() {
         virtualDisplay?.release()
         mediaProjection?.stop()
         Toast.makeText(
-                this,
-                applicationContext.getString(R.string.app_service_stop),
-                Toast.LENGTH_SHORT
+            this,
+            applicationContext.getString(R.string.app_service_stop),
+            Toast.LENGTH_SHORT
         ).show()
     }
 

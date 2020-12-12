@@ -49,7 +49,7 @@ abstract class BackgroundServiceMP : Service() {
     var mProjectionStopped = true
     val SCREENCAP_NAME = "screencap"
     val VIRTUAL_DISPLAY_FLAGS =
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
+        DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
     var mHandler: Handler? = null
     var virtualDisplay: VirtualDisplay? = null
     var mediaProjection: MediaProjection? = null
@@ -78,10 +78,10 @@ abstract class BackgroundServiceMP : Service() {
 
     fun createVirtualDisplay() {
         mediaProjection =
-                mediaProjectionManager.getMediaProjection(
-                        my_resultCode!!,
-                        my_data!!
-                )
+            mediaProjectionManager.getMediaProjection(
+                my_resultCode!!,
+                my_data!!
+            )
 
         // start capture handling thread
         object : Thread() {
@@ -107,14 +107,14 @@ abstract class BackgroundServiceMP : Service() {
         make_image_reader()
 
         var vd = mediaProjection!!.createVirtualDisplay(
-                SCREENCAP_NAME,
-                mWidth,
-                mHeight,
-                mDensity,
-                VIRTUAL_DISPLAY_FLAGS,
-                imageReader!!.surface,
-                null,
-                mHandler
+            SCREENCAP_NAME,
+            mWidth,
+            mHeight,
+            mDensity,
+            VIRTUAL_DISPLAY_FLAGS,
+            imageReader!!.surface,
+            null,
+            mHandler
         )
 
         return vd
@@ -135,16 +135,20 @@ abstract class BackgroundServiceMP : Service() {
         display.getRealSize(size)
         mWidth = size.x
         mHeight = size.y
+        if(::detect_run.isInitialized){
+            detect_run.build(mWidth, mHeight)
+        }
+
     }
 
     @SuppressLint("WrongConstant")
     fun make_image_reader() {
         // start capture reader
         imageReader = ImageReader.newInstance(
-                mWidth,
-                mHeight,
-                PixelFormat.RGBA_8888,
-                1
+            mWidth,
+            mHeight,
+            PixelFormat.RGBA_8888,
+            1
         )
     }
 
@@ -156,9 +160,9 @@ abstract class BackgroundServiceMP : Service() {
 
         if (mRotation != rotation) {
             Toast.makeText(
-                    applicationContext,
-                    applicationContext.getString(R.string.app_orientation_changed_start),
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                applicationContext.getString(R.string.app_orientation_changed_start),
+                Toast.LENGTH_SHORT
             ).show()
 
             if (virtualDisplay != null) {
@@ -173,9 +177,9 @@ abstract class BackgroundServiceMP : Service() {
             }
             //Thread.sleep(100)
             Toast.makeText(
-                    applicationContext,
-                    applicationContext.getString(R.string.app_orientation_changed_stop),
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                applicationContext.getString(R.string.app_orientation_changed_stop),
+                Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -183,7 +187,7 @@ abstract class BackgroundServiceMP : Service() {
     inner class OrientationChangeCallback internal constructor(
 
     ) :
-            OrientationEventListener(applicationContext) {
+        OrientationEventListener(applicationContext) {
         override fun onOrientationChanged(orientation: Int) {
             orientationEventListener()
         }
