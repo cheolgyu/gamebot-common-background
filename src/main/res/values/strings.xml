@@ -1,4 +1,5 @@
 <resources>
+    <string name="NATIVE_APP_KEY">95ce4e89e2e502fae295d1b5c49663fe</string>
     <string name="model">ssd_mobilenet</string>
     <string name="manual">manual</string>
     <string name="app_name">스톤에이지월드 하자</string>
@@ -14,6 +15,7 @@
     <string name="accessibility_service_description_noti">종료하기.</string>
     <string name="accessibility_service_description_xml">클릭권한을 사용합니다.</string>
     <string name="start_txt">시작하기</string>
+    <string name="kakao_login">카톡알림받기</string>
     <string name="exit_txt">종료하기</string>
     <string name="danger_txt">경고</string>
     <string name="sample_txt">샘플</string>
@@ -122,6 +124,7 @@
     <string name="label_78">이름 78</string>
     <string name="label_79">이름 79</string>
     <string name="label_80">이름 80</string>
+    <string name="kakao_send">나에게 발송</string>
 
 
 </resources>

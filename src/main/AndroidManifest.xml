@@ -41,6 +41,21 @@
         <activity android:name="com.highserpot.background.SampleActivity">
         </activity>
 
+        <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
+
+        <meta-data android:name="com.kakao.sdk.AppKey"
+                android:value="@string/NATIVE_APP_KEY" />
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth“ -->
+            <data android:host="oauth"
+                android:scheme="kakao95ce4e89e2e502fae295d1b5c49663fe" />
+        </intent-filter>
+    </activity>
+
     </application>
 
 
