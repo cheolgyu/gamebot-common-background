@@ -1,5 +1,6 @@
 package com.highserpot.background.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.RectF
@@ -148,15 +149,24 @@ class BackgroundServiceView(var ctx: Context) {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun listener_load_view() {
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
-        val kakao_send_btn: Button = onTopView.findViewById(R.id.kakao_send)
-
-        kakao_send_btn.setOnClickListener {
+        onTopView.findViewById<Button>(R.id.kakao_send).setOnClickListener {
             this.kakao_send()
         }
+
+        onTopView.findViewById<Switch>(R.id.kakao_send_switch).setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(
+                buttonView: CompoundButton,
+                isChecked: Boolean
+            ) {
+                BackgroundService.kakao_send_notify = isChecked
+            }
+        })
+
 
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }

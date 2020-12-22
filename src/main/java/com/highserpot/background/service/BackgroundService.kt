@@ -20,6 +20,9 @@ import java.nio.ByteBuffer
 
 
 class BackgroundService : BackgroundServiceMP() {
+    companion object  {
+        var kakao_send_notify  = false
+    }
 
     var STORE_DIRECTORY: String? = null
     private val FOREGROUND_SERVICE_ID = 1000
@@ -135,7 +138,7 @@ class BackgroundService : BackgroundServiceMP() {
             }else{
 
                 val notify =res[0].lb.optJSONObject("notify")
-                if (notify != null && notify.getBoolean("use")){
+                if (kakao_send_notify && notify != null && notify.getBoolean("use")){
                     notify_kakao(notify.getString("txt"))
                 }
 

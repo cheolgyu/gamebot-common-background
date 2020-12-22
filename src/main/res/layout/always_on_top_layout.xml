@@ -124,8 +124,8 @@
                         android:gravity="center"
                         android:showText="true"
                         android:switchMinWidth="100dp"
-                        android:textOff="@string/kakao_send_switch_on"
-                        android:textOn="@string/kakao_send_switch_off"
+                        android:textOff="@string/kakao_send_switch_off"
+                        android:textOn="@string/kakao_send_switch_on"
                         android:textStyle="bold"
                         android:theme="@style/CustomAppTheme"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
