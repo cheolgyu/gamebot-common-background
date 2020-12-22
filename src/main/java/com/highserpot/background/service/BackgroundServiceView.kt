@@ -17,13 +17,10 @@ import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.tf.tflite.Classifier
-import com.kakao.sdk.auth.LoginClient
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
-import com.kakao.sdk.user.UserApiClient
 
 class BackgroundServiceView(var ctx: Context) {
 
@@ -53,21 +50,40 @@ class BackgroundServiceView(var ctx: Context) {
 
     var TAG = "카카오"
 
-    fun kakao_send() {
-        val title_bag_over = "즐거운 하루되세요."
-        val defaultText = TextTemplate(
-            text = title_bag_over+""" """.trimIndent(),
-            link = Link(
-                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
-                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
-            )
-        )
+    fun usable_notify_kakao(): Boolean {
+        val chk = TokenManager.instance.getToken()
+        if (chk != null) {
+            return true
+        } else {
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.kakao_login_need),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
 
-        TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
-            if (error != null) {
-                Log.e(TAG, "나에게 보내기 실패", error)
-            } else {
-                Log.i(TAG, "나에게 보내기 성공")
+    }
+
+    fun kakao_send() {
+        if (usable_notify_kakao()) {
+            val title_bag_over = "즐거운 하루되세요."
+            val defaultText = TextTemplate(
+                text = title_bag_over + """ """.trimIndent(),
+                link = Link(
+                    webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
+                    mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
+                )
+            )
+
+
+            TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
+                if (error != null) {
+                    Log.e(TAG, "나에게 보내기 실패", error)
+
+                } else {
+                    Log.i(TAG, "나에게 보내기 성공")
+                }
             }
         }
 
@@ -129,7 +145,7 @@ class BackgroundServiceView(var ctx: Context) {
     fun load_view() {
 
         val inflater =
-                ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         onTopView = inflater.inflate(R.layout.always_on_top_layout, null)
 
         window_params = utils.get_wm_lp(true)
@@ -158,14 +174,13 @@ class BackgroundServiceView(var ctx: Context) {
             this.kakao_send()
         }
 
-        onTopView.findViewById<Switch>(R.id.kakao_send_switch).setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(
-                buttonView: CompoundButton,
-                isChecked: Boolean
-            ) {
-                BackgroundService.kakao_send_notify = isChecked
+        onTopView.findViewById<Switch>(R.id.kakao_send_switch)
+            .setOnCheckedChangeListener { buttonView, isChecked ->
+                var chk = usable_notify_kakao()
+
+                BackgroundService.kakao_send_notify = isChecked && chk
+                buttonView.isChecked = BackgroundService.kakao_send_notify
             }
-        })
 
 
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
@@ -174,14 +189,14 @@ class BackgroundServiceView(var ctx: Context) {
             if (area_on_off.visibility == View.VISIBLE) {
                 area_on_off.visibility = View.GONE
                 DrawableCompat.setTint(
-                        btn_on_off.drawable,
-                        ctx.getColor(R.color.ic_launcher_background)
+                    btn_on_off.drawable,
+                    ctx.getColor(R.color.ic_launcher_background)
                 )
             } else {
                 area_on_off.visibility = View.VISIBLE
                 DrawableCompat.setTint(
-                        btn_on_off.drawable,
-                        ctx.getColor(R.color.browser_actions_title_color)
+                    btn_on_off.drawable,
+                    ctx.getColor(R.color.browser_actions_title_color)
                 )
             }
         }
@@ -189,8 +204,8 @@ class BackgroundServiceView(var ctx: Context) {
         btn_switch = onTopView.findViewById(R.id.btn_switch)
         btn_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(
-                    buttonView: CompoundButton,
-                    isChecked: Boolean
+                buttonView: CompoundButton,
+                isChecked: Boolean
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
@@ -198,9 +213,9 @@ class BackgroundServiceView(var ctx: Context) {
                     BS_THREAD = true
                     effectView.visibility = View.VISIBLE
                     Toast.makeText(
-                            ctx,
-                            ctx.getString(R.string.app_service_thread_start),
-                            Toast.LENGTH_SHORT
+                        ctx,
+                        ctx.getString(R.string.app_service_thread_start),
+                        Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     buttonView.setTextColor(Color.BLACK)
@@ -208,9 +223,9 @@ class BackgroundServiceView(var ctx: Context) {
                     BS_THREAD = false
                     effectView.visibility = View.INVISIBLE
                     Toast.makeText(
-                            ctx,
-                            ctx.getString(R.string.app_service_thread_stop),
-                            Toast.LENGTH_SHORT
+                        ctx,
+                        ctx.getString(R.string.app_service_thread_stop),
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -219,8 +234,8 @@ class BackgroundServiceView(var ctx: Context) {
         rect_switch = onTopView.findViewById(R.id.rect_switch)
         rect_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(
-                    buttonView: CompoundButton,
-                    isChecked: Boolean
+                buttonView: CompoundButton,
+                isChecked: Boolean
             ) {
                 if (isChecked) {
                     buttonView.setTextColor(Color.BLUE)
@@ -299,7 +314,12 @@ class BackgroundServiceView(var ctx: Context) {
         onTopView.getLocationOnScreen(point) // or getLocationInWindow(point)
         onTopView.width
         val (x, y) = point
-        tv_RectF = RectF(x.toFloat(), y.toFloat(), x.toFloat() + onTopView.width, y.toFloat() + onTopView.height)
+        tv_RectF = RectF(
+            x.toFloat(),
+            y.toFloat(),
+            x.toFloat() + onTopView.width,
+            y.toFloat() + onTopView.height
+        )
     }
 
     private fun setCoordinateUpdate(x: Float, y: Float) {

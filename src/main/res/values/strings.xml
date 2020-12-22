@@ -17,6 +17,9 @@
     <string name="start_txt">시작하기</string>
 
     <string name="kakao_login">카톡.로그인</string>
+    <string name="kakao_login_need">카톡.로그인 하세요.</string>
+    <string name="kakao_login_succeed">카톡.로그인 성공!</string>
+    <string name="kakao_logout_succeed">카톡.로그아웃 성공!</string>
     <string name="kakao_send">카톡.알림테스트</string>
     <string name="kakao_send_switch">카톡알림</string>
     <string name="kakao_send_switch_on">수신</string>

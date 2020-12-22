@@ -65,6 +65,11 @@ open class MediaProjectionActivity : AppCompatActivity() {
             }
             else if (token != null) {
                 Log.i(TAG, "로그인 성공 ${token.accessToken}")
+                Toast.makeText(
+                    this,
+                    getString(R.string.kakao_login_succeed),
+                    Toast.LENGTH_SHORT
+                ).show()
 
 
             }
