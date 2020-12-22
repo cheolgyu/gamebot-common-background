@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -103,7 +104,32 @@
                         android:theme="@style/CustomAppTheme" />
 
                 </TableRow>
+                <TableRow>
 
+                <Button
+                    android:id="@+id/kakao_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="kakao_send"
+                    android:text="@string/kakao_send"
+                    />
+                    <TextView
+                        android:padding="3dip"
+                        android:text="@string/kakao_send_switch"
+                        android:textStyle="bold" />
+                    <Switch
+                        android:id="@+id/kakao_send_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:showText="true"
+                        android:switchMinWidth="100dp"
+                        android:textOff="@string/kakao_send_switch_on"
+                        android:textOn="@string/kakao_send_switch_off"
+                        android:textStyle="bold"
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+                </TableRow>
 
             </TableLayout>
         </LinearLayout>

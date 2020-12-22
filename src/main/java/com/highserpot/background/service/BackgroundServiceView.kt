@@ -16,6 +16,13 @@ import com.highserpot.background.Utils
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.tf.tflite.Classifier
+import com.kakao.sdk.auth.LoginClient
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.talk.TalkApiClient
+import com.kakao.sdk.template.model.Link
+import com.kakao.sdk.template.model.TextTemplate
+import com.kakao.sdk.user.UserApiClient
 
 class BackgroundServiceView(var ctx: Context) {
 
@@ -40,6 +47,30 @@ class BackgroundServiceView(var ctx: Context) {
         load_view()
         load_view_effect()
         load_view_rect()
+
+    }
+
+    var TAG = "카카오"
+
+    fun kakao_send() {
+        val title_bag_over = "즐거운 하루되세요."
+        val defaultText = TextTemplate(
+            text = title_bag_over+""" """.trimIndent(),
+            link = Link(
+                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
+                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
+            )
+        )
+
+        TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
+            if (error != null) {
+                Log.e(TAG, "나에게 보내기 실패", error)
+            } else {
+                Log.i(TAG, "나에게 보내기 성공")
+            }
+        }
+
+
     }
 
     fun draw_effect(x: Float, y: Float) {
@@ -120,6 +151,13 @@ class BackgroundServiceView(var ctx: Context) {
     fun listener_load_view() {
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
+        area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
+        val kakao_send_btn: Button = onTopView.findViewById(R.id.kakao_send)
+
+        kakao_send_btn.setOnClickListener {
+            this.kakao_send()
+        }
+
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
         btn_on_off.setOnTouchListener { arg0, arg1 -> move(arg0!!, arg1) }
         btn_on_off.setOnClickListener {

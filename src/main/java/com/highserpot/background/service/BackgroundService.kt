@@ -13,6 +13,9 @@ import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.notification.Noti
+import com.kakao.sdk.talk.TalkApiClient
+import com.kakao.sdk.template.model.Link
+import com.kakao.sdk.template.model.TextTemplate
 import java.nio.ByteBuffer
 
 
@@ -88,6 +91,25 @@ class BackgroundService : BackgroundServiceMP() {
         return null
     }
 
+    fun notify_kakao(string: String) {
+        val title = string
+        val defaultText = TextTemplate(
+            text = title+""" """.trimIndent(),
+            link = Link(
+                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
+                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
+            )
+        )
+        val TAG ="카카오"
+        TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
+            if (error != null) {
+                Log.e(TAG, "나에게 보내기 실패", error)
+            } else {
+                Log.i(TAG, "나에게 보내기 성공")
+            }
+        }
+    }
+
     fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
 
         val res = detect_run.get_results_bitmap(bitmap)
@@ -106,10 +128,25 @@ class BackgroundService : BackgroundServiceMP() {
         }
 
         if (res.isNotEmpty()) {
+            //루프중 이번 인식목록의 글릭가능 가능여부는 인식목록 안에 있는 객체의 click에 저장함.
             if (!res[0].click) {
+
                 return null
+            }else{
+
+                val notify =res[0].lb.optJSONObject("notify")
+                if (notify != null && notify.getBoolean("use")){
+                    notify_kakao(notify.getString("txt"))
+                }
+
+
             }
+
+
+            // lb.click_object: 인식객체가 클릭객체 인지 아닌지의 구분
             if (!res[0].lb.getBoolean("click_object")) {
+
+
                 return null
             }
         }
