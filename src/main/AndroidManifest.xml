@@ -8,7 +8,7 @@
         android:name="android.permission.SYSTEM_ALERT_WINDOW"
         tools:node="merge" />
 
-    <application tools:node="merge" android:largeHeap="true"  android:hardwareAccelerated="false" >
+    <application tools:node="merge" android:largeHeap="true"  android:hardwareAccelerated="true" >
 
         <service
             android:name="com.highserpot.background.service.TouchService"

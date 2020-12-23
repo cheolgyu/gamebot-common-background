@@ -18,8 +18,6 @@ import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
-import com.kakao.sdk.talk.TalkApiClient
-import com.kakao.sdk.template.model.*
 import com.kakao.sdk.user.UserApiClient
 
 open class MediaProjectionActivity : AppCompatActivity() {
@@ -54,6 +52,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
         KakaoSdk.init(this, getString(R.string.NATIVE_APP_KEY))
 
     }
+
     var TAG = "카카오"
     fun login_kakao(view: View?) {
         // 로그인 조합 예제
@@ -62,8 +61,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(TAG, "로그인 실패", error)
-            }
-            else if (token != null) {
+            } else if (token != null) {
                 Log.i(TAG, "로그인 성공 ${token.accessToken}")
                 Toast.makeText(
                     this,
@@ -86,17 +84,21 @@ open class MediaProjectionActivity : AppCompatActivity() {
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
             if (error != null) {
                 Log.e(TAG, "토큰 정보 보기 실패", error)
-            }
-            else if (tokenInfo != null) {
-                Log.i(TAG, "토큰 정보 보기 성공" +
-                        "\n회원번호: ${tokenInfo.id}" +
-                        "\n만료시간: ${tokenInfo.expiresIn} 초")
+            } else if (tokenInfo != null) {
+                Log.i(
+                    TAG, "토큰 정보 보기 성공" +
+                            "\n회원번호: ${tokenInfo.id}" +
+                            "\n만료시간: ${tokenInfo.expiresIn} 초"
+                )
             }
         }
     }
 
     fun service_stop_btn(view: View?) {
         stopService(mIntent)
+        finishAffinity();
+        System.runFinalization();
+        System.exit(0);
     }
 
     fun service_start_btn(view: View?) {
@@ -150,7 +152,7 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     fun sample_click(view: View?) {
-        var intent =  Intent(applicationContext,SampleActivity::class.java)
+        var intent = Intent(applicationContext, SampleActivity::class.java)
         startActivity(intent)
     }
 

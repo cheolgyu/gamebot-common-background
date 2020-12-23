@@ -57,12 +57,22 @@ abstract class BackgroundServiceMP : Service() {
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
 
-    lateinit var detect_run: Run
+    var detect_run: Run? = null
+
+    fun close() {
+        detect_run!!.close()
+        orientationChangeCallback.disable()
+        imageReader!!.close()
+        virtualDisplay!!.release()
+        mediaProjection!!.stop()
+        this.applicationContext.unregisterReceiver(mBroadcastReceiver);
+
+    }
 
     fun createModel() {
         val so = getScreenOrientation()
         detect_run = Run(applicationContext)
-        detect_run.init()
+
     }
 
     fun getScreenOrientation(): Int {
@@ -135,8 +145,8 @@ abstract class BackgroundServiceMP : Service() {
         display.getRealSize(size)
         mWidth = size.x
         mHeight = size.y
-        if(::detect_run.isInitialized){
-            detect_run.build(mWidth, mHeight)
+        if (detect_run != null) {
+            detect_run!!.build(mWidth, mHeight)
         }
 
     }

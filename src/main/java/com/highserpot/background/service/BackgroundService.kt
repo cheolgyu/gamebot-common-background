@@ -20,8 +20,8 @@ import java.nio.ByteBuffer
 
 
 class BackgroundService : BackgroundServiceMP() {
-    companion object  {
-        var kakao_send_notify  = false
+    companion object {
+        var kakao_send_notify = false
     }
 
     var STORE_DIRECTORY: String? = null
@@ -57,7 +57,7 @@ class BackgroundService : BackgroundServiceMP() {
 
             createVirtualDisplay()
             createModel()
-            detect_run.build(mWidth, mHeight)
+            detect_run!!.build(mWidth, mHeight)
             bsView.start()
 
         }
@@ -97,13 +97,13 @@ class BackgroundService : BackgroundServiceMP() {
     fun notify_kakao(string: String) {
         val title = string
         val defaultText = TextTemplate(
-            text = title+""" """.trimIndent(),
+            text = title + """ """.trimIndent(),
             link = Link(
                 webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
                 mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
             )
         )
-        val TAG ="카카오"
+        val TAG = "카카오"
         TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
             if (error != null) {
                 Log.e(TAG, "나에게 보내기 실패", error)
@@ -115,7 +115,7 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
 
-        val res = detect_run.get_results_bitmap(bitmap)
+        val res = detect_run!!.get_results_bitmap(bitmap)
 
 
         var c_xy: FloatArray? = null
@@ -135,10 +135,10 @@ class BackgroundService : BackgroundServiceMP() {
             if (!res[0].click) {
 
                 return null
-            }else{
+            } else {
 
-                val notify =res[0].lb.optJSONObject("notify")
-                if (kakao_send_notify && notify != null && notify.getBoolean("use")){
+                val notify = res[0].lb.optJSONObject("notify")
+                if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
                     notify_kakao(notify.getString("txt"))
                 }
 
@@ -159,9 +159,15 @@ class BackgroundService : BackgroundServiceMP() {
 
     inner class BackgroundThread : Thread() {
 
+        fun exit() {
+            sleep(1000)
+            interrupt()
+            Log.e("종료", "=====================쓰레드.exit======================")
+        }
+
         override fun run() {
-            while (true) {
-                if (BS_THREAD && !RUN_DETECT) {
+            while (true && !isInterrupted) {
+                if (BS_THREAD && !RUN_DETECT && !isInterrupted && detect_run?.detector?.run_state == true) {
 
 
                     val startTime = SystemClock.uptimeMillis()
@@ -170,7 +176,7 @@ class BackgroundService : BackgroundServiceMP() {
 
 
 
-                    if (bitmap != null) {
+                    if (bitmap != null && detect_run != null && !isInterrupted) {
                         val startTime = SystemClock.uptimeMillis()
                         RUN_DETECT = true
                         var arr: FloatArray? = tflite_bitmap(bitmap)
@@ -202,24 +208,30 @@ class BackgroundService : BackgroundServiceMP() {
 
 
             }
+
+
         }
 
     }
 
-
     override fun onDestroy() {
-        Log.d(TAG, "=============onDestroy===================")
-        this.applicationContext.unregisterReceiver(mBroadcastReceiver);
-        bsView.stop()
-        bsView.destroy()
-        orientationChangeCallback.disable()
-        virtualDisplay?.release()
-        mediaProjection?.stop()
+        BS_THREAD = false
+        bsThread.exit()
+        close()
+        bsView.close()
+
+
+        //touchService.disableSelf()
+
         Toast.makeText(
             this,
             applicationContext.getString(R.string.app_service_stop),
             Toast.LENGTH_SHORT
         ).show()
+
+
+
+        Log.e("종료", "=====================끝=====================")
     }
 
 

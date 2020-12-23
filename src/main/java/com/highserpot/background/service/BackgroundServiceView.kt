@@ -116,7 +116,8 @@ class BackgroundServiceView(var ctx: Context) {
         rect_switch.isChecked = false
     }
 
-    fun destroy() {
+    fun close() {
+        stop()
         manager.removeView(onTopView)
         manager.removeView(effectView)
     }
