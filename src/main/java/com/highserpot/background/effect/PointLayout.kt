@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,15 +22,16 @@ class PointLayout @JvmOverloads constructor(
 
     fun get_image_view(cx: Float, cy: Float): ImageView {
         return ImageView(this.context).apply {
-            setImageResource(R.drawable.ic_baseline_pets_24)
-            setBackgroundColor(Color.WHITE)
-            x = cx - width / 2
-            y = cy - height / 2
+            setImageResource(R.drawable.ic_baseline_pets_100)
+            setBackgroundColor(Color.TRANSPARENT)
+            x = cx- drawable.intrinsicWidth / 2
+            y = cy-drawable.intrinsicHeight / 2
         }
     }
 
     fun draw(cx: Float, cy: Float) {
         val iv = get_image_view(cx, cy)
+
         this.addView(iv)
         val mMyTask = Runnable {
             (this as RelativeLayout).removeView(iv)

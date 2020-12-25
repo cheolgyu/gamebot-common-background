@@ -25,7 +25,7 @@ class RectLayout @JvmOverloads constructor(
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         this.setBackgroundColor(Color.TRANSPARENT)
-        color = context.applicationContext.getColor(R.color.colorPrimary)
+        color = context.applicationContext.getColor(R.color.box)
     }
 
     val sec = 300
