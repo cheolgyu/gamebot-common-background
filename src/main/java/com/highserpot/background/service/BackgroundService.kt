@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
+import com.highserpot.background.clickable
 import com.highserpot.background.notification.Noti
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.template.model.Link
@@ -162,7 +163,7 @@ class BackgroundService : BackgroundServiceMP() {
         fun exit() {
             sleep(1000)
             interrupt()
-            Log.e("종료", "=====================쓰레드.exit======================")
+            Log.d("종료", "=====================쓰레드.exit======================")
         }
 
         override fun run() {
@@ -190,7 +191,9 @@ class BackgroundService : BackgroundServiceMP() {
                             val y = arr.get(1)
 
                             if (!bsView.tv_RectF.contains(x, y)) {
-                                touchService.click(x, y)
+                                if (clickable){
+                                    touchService.click(x, y)
+                                }
                                 Handler(Looper.getMainLooper()).post(Runnable {
                                     bsView.draw_effect(x, y)
                                 })
@@ -231,7 +234,7 @@ class BackgroundService : BackgroundServiceMP() {
 
 
 
-        Log.e("종료", "=====================끝=====================")
+        Log.d("종료", "=====================끝=====================")
     }
 
 

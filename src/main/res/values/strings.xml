@@ -17,6 +17,13 @@
     <string name="start_txt">시작하기</string>
 
     <string name="kakao_login">카톡.로그인</string>
+    <string name="click_setting_btn">클릭설정</string>
+    <string name="clickable">클릭권한이 있습니다.</string>
+    <string name="need_click">클릭권한이 필요합니다.</string>
+    <string name="clickable_switch">클릭</string>
+    <string name="clickable_switch_on">사용</string>
+    <string name="clickable_switch_off">안함</string>
+
     <string name="kakao_login_need">카톡.로그인 하세요.</string>
     <string name="kakao_login_succeed">카톡.로그인 성공!</string>
     <string name="kakao_logout_succeed">카톡.로그아웃 성공!</string>

@@ -9,8 +9,9 @@ import android.content.SharedPreferences
 import android.provider.Settings
 import android.text.Html
 import android.view.accessibility.AccessibilityManager
+import android.widget.Toast
 
-
+var clickable = false
 class CheckTouch(val context: Context) {
     lateinit var sharedPref: SharedPreferences
 
@@ -18,17 +19,7 @@ class CheckTouch(val context: Context) {
         context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
     }
 
-    fun chk(): Boolean {
 
-        if (!checkAccessibilityPermissions()) {
-            setAccessibilityPermissions()
-            checkFirstRun()
-        } else {
-            checkFirstRun()
-            return true
-        }
-        return false
-    }
 
     fun isAccessServiceEnabled(context: Context): Boolean {
         val prefString =
@@ -40,11 +31,20 @@ class CheckTouch(val context: Context) {
     }
 
     fun checkAccessibilityPermissions(): Boolean {
-        if (am != null && am.isEnabled && isAccessServiceEnabled(context)) {
+        if (am.isEnabled && isAccessServiceEnabled(context)) {
+            clickable = true
             return true
+        }else{
+            clickable = false
+            Toast.makeText(
+                context,
+                context.getString(R.string.need_click),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
         }
 
-        return false
+
     }
 
     fun setAccessibilityPermissions() {
@@ -81,7 +81,7 @@ class CheckTouch(val context: Context) {
 
             val editor = sharedPref.edit()
             editor.putBoolean(context.getString(R.string.preference_file_key), true)
-            editor.commit()
+            editor.apply()
 
         }
         builder.setNegativeButton(

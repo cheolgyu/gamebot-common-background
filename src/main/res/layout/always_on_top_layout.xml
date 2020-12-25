@@ -106,6 +106,26 @@
                 </TableRow>
                 <TableRow>
 
+
+                    <TextView
+                        android:padding="3dip"
+                        android:text="@string/clickable_switch"
+                        android:textStyle="bold" />
+                    <Switch
+                        android:id="@+id/clickable_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:showText="true"
+                        android:switchMinWidth="100dp"
+                        android:textOff="@string/clickable_switch_off"
+                        android:textOn="@string/clickable_switch_on"
+                        android:textStyle="bold"
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+                </TableRow>
+                <TableRow>
+
                 <Button
                     android:id="@+id/kakao_send"
                     android:layout_width="wrap_content"

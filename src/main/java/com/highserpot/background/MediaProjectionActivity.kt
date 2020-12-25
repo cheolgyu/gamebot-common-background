@@ -51,6 +51,8 @@ open class MediaProjectionActivity : AppCompatActivity() {
         Log.d("keyHash", keyHash)
         KakaoSdk.init(this, getString(R.string.NATIVE_APP_KEY))
 
+        CheckTouch(applicationContext).checkAccessibilityPermissions()
+
     }
 
     var TAG = "카카오"
@@ -94,6 +96,21 @@ open class MediaProjectionActivity : AppCompatActivity() {
         }
     }
 
+    fun click_setting_btn(view: View?) {
+        if (CheckTouch(this).checkAccessibilityPermissions()){
+            Toast.makeText(
+                this,
+                this.getString(R.string.clickable),
+                Toast.LENGTH_SHORT
+            ).show()
+        }else{
+            stopService(mIntent)
+            CheckTouch(this).setAccessibilityPermissions()
+
+            //stopService(mIntent)
+        }
+    }
+
     fun service_stop_btn(view: View?) {
         stopService(mIntent)
         finishAffinity();
@@ -102,24 +119,16 @@ open class MediaProjectionActivity : AppCompatActivity() {
     }
 
     fun service_start_btn(view: View?) {
+        CheckTouch(this).checkFirstRun()
         Log.d(
             "탑뷰",
             Settings.canDrawOverlays(applicationContext).toString()
         )
         if (Settings.canDrawOverlays(applicationContext)) {
-            if (CheckTouch(this).chk()) {
-                var mediaProjectionManager =
-                    getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
-                startActivityForResult(captureIntent, 1000)
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.accessibility_service_description_need),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-            }
+            var mediaProjectionManager =
+                getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            var captureIntent: Intent = mediaProjectionManager.createScreenCaptureIntent()
+            startActivityForResult(captureIntent, 1000)
         } else {
             onObtainingPermissionOverlayWindow()
         }
