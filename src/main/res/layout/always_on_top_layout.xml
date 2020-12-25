@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -31,8 +32,8 @@
                     android:src="@drawable/icon_topview" />
             </LinearLayout>
 
-            <LinearLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:layout_width="320dp"
+            <LinearLayout
+                android:layout_width="401dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -44,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    ads:adSize="BANNER"
+                    ads:adSize="SMART_BANNER"
                     ads:adUnitId="@string/ad_banner" />
             </LinearLayout>
 
@@ -104,6 +105,7 @@
                         android:theme="@style/CustomAppTheme" />
 
                 </TableRow>
+
                 <TableRow>
 
 
@@ -111,6 +113,7 @@
                         android:padding="3dip"
                         android:text="@string/clickable_switch"
                         android:textStyle="bold" />
+
                     <Switch
                         android:id="@+id/clickable_switch"
                         android:layout_width="wrap_content"
@@ -124,19 +127,21 @@
                         android:theme="@style/CustomAppTheme"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
                 </TableRow>
+
                 <TableRow>
 
-                <Button
-                    android:id="@+id/kakao_send"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="kakao_send"
-                    android:text="@string/kakao_send"
-                    />
+                    <Button
+                        android:id="@+id/kakao_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="kakao_send"
+                        android:text="@string/kakao_send" />
+
                     <TextView
                         android:padding="3dip"
                         android:text="@string/kakao_send_switch"
                         android:textStyle="bold" />
+
                     <Switch
                         android:id="@+id/kakao_send_switch"
                         android:layout_width="wrap_content"
