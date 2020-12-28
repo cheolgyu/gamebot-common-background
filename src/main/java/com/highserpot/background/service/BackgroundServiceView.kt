@@ -201,13 +201,13 @@ class BackgroundServiceView(var ctx: Context) {
                 area_on_off.visibility = View.GONE
                 DrawableCompat.setTint(
                     btn_on_off.drawable,
-                    ctx.getColor(R.color.ic_launcher_background)
+                    ctx.getColor(R.color.box)
                 )
             } else {
                 area_on_off.visibility = View.VISIBLE
                 DrawableCompat.setTint(
                     btn_on_off.drawable,
-                    ctx.getColor(R.color.browser_actions_title_color)
+                    ctx.getColor(R.color.colorPrimary)
                 )
             }
         }

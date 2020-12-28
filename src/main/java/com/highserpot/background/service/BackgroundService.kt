@@ -96,12 +96,13 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun notify_kakao(string: String) {
+        Log.d("클릭 notify_kakao", string.toString())
         val title = string
         val defaultText = TextTemplate(
             text = title + """ """.trimIndent(),
             link = Link(
-                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
-                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
+                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.rok",
+                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.rok"
             )
         )
         val TAG = "카카오"
@@ -133,19 +134,15 @@ class BackgroundService : BackgroundServiceMP() {
 
         if (res.isNotEmpty()) {
             //루프중 이번 인식목록의 글릭가능 가능여부는 인식목록 안에 있는 객체의 click에 저장함.
+            Log.d("클릭 객체", (!res[0].click).toString())
             if (!res[0].click) {
-
-                return null
-            } else {
-
                 val notify = res[0].lb.optJSONObject("notify")
+                Log.d("클릭 kakao_send_notify", kakao_send_notify.toString())
                 if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
                     notify_kakao(notify.getString("txt"))
                 }
 
-
             }
-
 
             // lb.click_object: 인식객체가 클릭객체 인지 아닌지의 구분
             if (!res[0].lb.getBoolean("click_object")) {

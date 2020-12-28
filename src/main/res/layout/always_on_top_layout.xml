@@ -33,7 +33,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="401dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -43,9 +43,7 @@
                     android:id="@+id/always_on_top_adview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    ads:adSize="SMART_BANNER"
+                    ads:adSize="MEDIUM_RECTANGLE"
                     ads:adUnitId="@string/ad_banner" />
             </LinearLayout>
 
@@ -81,7 +79,8 @@
                         android:textOff="@string/over_stop_txt"
                         android:textOn="@string/over_start_txt"
                         android:textStyle="bold"
-                        android:theme="@style/CustomAppTheme" />
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 </TableRow>
 
@@ -102,7 +101,8 @@
                         android:textOff="@string/rect_layout_stop_txt"
                         android:textOn="@string/rect_layout_start_txt"
                         android:textStyle="bold"
-                        android:theme="@style/CustomAppTheme" />
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 </TableRow>
 
