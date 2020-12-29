@@ -12,10 +12,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.highserpot.background.CheckTouch
-import com.highserpot.background.R
-import com.highserpot.background.Utils
-import com.highserpot.background.clickable
+import com.highserpot.background.*
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.tf.tflite.Classifier
@@ -179,10 +176,10 @@ class BackgroundServiceView(var ctx: Context) {
 
         onTopView.findViewById<Switch>(R.id.clickable_switch)
             .setOnCheckedChangeListener { buttonView, isChecked ->
-                var chk = CheckTouch(ctx).checkAccessibilityPermissions()
+                CheckTouch(ctx).checkAccessibilityPermissions()
 
-                clickable = isChecked && chk
-                buttonView.isChecked = clickable
+                user_calickable = isChecked && device_clickable
+                buttonView.isChecked = user_calickable
             }
 
         onTopView.findViewById<Switch>(R.id.kakao_send_switch)
