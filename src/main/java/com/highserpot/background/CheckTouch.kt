@@ -11,7 +11,8 @@ import android.text.Html
 import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 
-var clickable = false
+var device_clickable = false
+var user_calickable = false
 class CheckTouch(val context: Context) {
     lateinit var sharedPref: SharedPreferences
 
@@ -32,10 +33,10 @@ class CheckTouch(val context: Context) {
 
     fun checkAccessibilityPermissions(): Boolean {
         if (am.isEnabled && isAccessServiceEnabled(context)) {
-            clickable = true
+            device_clickable = true
             return true
         }else{
-            clickable = false
+            device_clickable = false
             Toast.makeText(
                 context,
                 context.getString(R.string.need_click),

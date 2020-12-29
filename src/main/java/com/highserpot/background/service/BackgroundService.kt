@@ -12,8 +12,8 @@ import android.util.Log
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
-import com.highserpot.background.clickable
 import com.highserpot.background.notification.Noti
+import com.highserpot.background.user_calickable
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
@@ -188,12 +188,12 @@ class BackgroundService : BackgroundServiceMP() {
                             val y = arr.get(1)
 
                             if (!bsView.tv_RectF.contains(x, y)) {
-                                if (clickable){
+                                if (user_calickable) {
                                     touchService.click(x, y)
                                 }
-                                Handler(Looper.getMainLooper()).post(Runnable {
+                                Handler(Looper.getMainLooper()).post {
                                     bsView.draw_effect(x, y)
-                                })
+                                }
                             } else {
                                 Log.d("탑뷰-좌표", "광고영역에 들어왔습니다.")
                             }
