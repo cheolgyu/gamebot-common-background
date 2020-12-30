@@ -116,7 +116,7 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
 
-        val res = detect_run!!.get_results_bitmap(bitmap)
+        val res = detect_run!!.get_results_bitmap(bitmap, lastProcessingTimeMs)
 
 
         var c_xy: FloatArray? = null
@@ -173,7 +173,7 @@ class BackgroundService : BackgroundServiceMP() {
 
                     val startTime = SystemClock.uptimeMillis()
                     val bitmap = image_available_bitmap()
-                    val lastProcessingTimeMs_bitmap = SystemClock.uptimeMillis() - startTime
+                    lastProcessingTimeMs_capture = SystemClock.uptimeMillis() - startTime
 
 
 
@@ -182,10 +182,9 @@ class BackgroundService : BackgroundServiceMP() {
                         RUN_DETECT = true
                         var arr: FloatArray? = tflite_bitmap(bitmap)
                         RUN_DETECT = false
-                        var lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
-                        Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_bitmap + "ms")
+                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+                        Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_capture + "ms")
                         Log.d("시간", "tflite_run:  : " + lastProcessingTimeMs + "ms")
-
                         if (arr != null) {
                             val x = arr.get(0)
                             val y = arr.get(1)

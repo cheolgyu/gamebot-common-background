@@ -33,6 +33,11 @@ var BS_THREAD = false
 var RUN_DETECT = false
 
 abstract class BackgroundServiceMP : Service() {
+    companion object {
+        var lastProcessingTimeMs : Long = 0
+        var lastProcessingTimeMs_capture : Long = 2
+
+    }
 
     val BCAST_CONFIGCHANGED = "android.intent.action.CONFIGURATION_CHANGED"
     var my_data: Intent? = null
