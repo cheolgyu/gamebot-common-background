@@ -170,9 +170,9 @@ class BackgroundServiceView(var ctx: Context) {
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
-        onTopView.findViewById<Button>(R.id.kakao_send).setOnClickListener {
-            this.kakao_send()
-        }
+//        onTopView.findViewById<Button>(R.id.kakao_send).setOnClickListener {
+//            this.kakao_send()
+//        }
 
         onTopView.findViewById<Switch>(R.id.clickable_switch)
             .setOnCheckedChangeListener { buttonView, isChecked ->
@@ -182,13 +182,13 @@ class BackgroundServiceView(var ctx: Context) {
                 buttonView.isChecked = user_calickable
             }
 
-        onTopView.findViewById<Switch>(R.id.kakao_send_switch)
-            .setOnCheckedChangeListener { buttonView, isChecked ->
-                var chk = usable_notify_kakao()
-
-                BackgroundService.kakao_send_notify = isChecked && chk
-                buttonView.isChecked = BackgroundService.kakao_send_notify
-            }
+//        onTopView.findViewById<Switch>(R.id.kakao_send_switch)
+//            .setOnCheckedChangeListener { buttonView, isChecked ->
+//                var chk = usable_notify_kakao()
+//
+//                BackgroundService.kakao_send_notify = isChecked && chk
+//                buttonView.isChecked = BackgroundService.kakao_send_notify
+//            }
 
 
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
