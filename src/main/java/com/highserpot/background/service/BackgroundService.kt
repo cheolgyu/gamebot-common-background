@@ -114,48 +114,59 @@ class BackgroundService : BackgroundServiceMP() {
         }
     }
 
-    fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
+    class ActionInfo {
+        var x: Float = 0.0f
+        var y: Float = 0.0f
+        lateinit var action_type: String
+
+        constructor(x: Float, y: Float, action_type: String) : this() {
+            this.x = x
+            this.y = y
+            this.action_type = action_type
+        }
+
+        constructor()
+    }
+
+    fun tflite_bitmap(bitmap: Bitmap): ActionInfo? {
 
         val res = detect_run!!.get_results_bitmap(bitmap, lastProcessingTimeMs)
-
-
-        var c_xy: FloatArray? = null
-        if (res.isNotEmpty()) {
-            c_xy = utils.click_xy(res[0].getLocation())
-        }
-        Log.d("클릭 객체", res.toString())
-
-        if (res.isNotEmpty() && bsView.rect_view_visible()) {
-            Handler(Looper.getMainLooper()).post(Runnable {
-                bsView.draw_rect_show(res)
-            })
-        }
+        var action_info: ActionInfo? = null
 
         if (res.isNotEmpty()) {
-            //루프중 이번 인식목록의 글릭가능 가능여부는 인식목록 안에 있는 객체의 click에 저장함.
-            if (!res[0].click) {
+            var target = res[0]
+            if (target.click) {
+                var action = target.lb.getString("action")
+                val notify = target.lb.optJSONObject("notify")
 
-                return null
-            } else {
+                var xy = utils.click_xy(target.getLocation())
 
-                val notify = res[0].lb.optJSONObject("notify")
+                if (action == "no_action") {
+                    action_info = null
+                } else if (xy != null && action == "click") {
+                    action_info = ActionInfo(xy.get(0), xy.get(1), action)
+                } else if (xy != null && action == "swipe") {
+                    var t_rect = target.getLocation()
+                    t_rect.left
+                    action_info = ActionInfo(xy.get(0), xy.get(1), action)
+                }
+
+                //박스보이게
+                if (bsView.rect_view_visible()) {
+                    Handler(Looper.getMainLooper()).post {
+                        bsView.draw_rect_show(res)
+                    }
+                }
+
+                //알림발송
                 if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
                     notify_kakao(notify.getString("txt"))
                 }
-
-
             }
 
-
-            // lb.click_object: 인식객체가 클릭객체 인지 아닌지의 구분
-            if (!res[0].lb.getBoolean("click_object")) {
-
-
-                return null
-            }
         }
 
-        return c_xy
+        return action_info
     }
 
     inner class BackgroundThread : Thread() {
@@ -180,18 +191,18 @@ class BackgroundService : BackgroundServiceMP() {
                     if (bitmap != null && detect_run != null && !isInterrupted) {
                         val startTime = SystemClock.uptimeMillis()
                         RUN_DETECT = true
-                        var arr: FloatArray? = tflite_bitmap(bitmap)
+                        var act_info: ActionInfo? = tflite_bitmap(bitmap)
                         RUN_DETECT = false
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
                         Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_capture + "ms")
                         Log.d("시간", "tflite_run:  : " + lastProcessingTimeMs + "ms")
-                        if (arr != null) {
-                            val x = arr.get(0)
-                            val y = arr.get(1)
+                        if (act_info != null) {
+                            val x = act_info.x
+                            val y = act_info.y
 
                             if (!bsView.tv_RectF.contains(x, y)) {
                                 if (user_calickable) {
-                                    touchService.click(x, y)
+                                    touchService.click(act_info)
                                 }
                                 Handler(Looper.getMainLooper()).post {
                                     bsView.draw_effect(x, y)
