@@ -42,7 +42,7 @@ class ScreenHistory {
         time_for_common_status = time_for_confirm_consecutive_clicks * 6
         time_for_keep_history_for_status = time_for_common_status * 6
         time_for_keep_history_for_aiming = time_for_confirm_consecutive_clicks * 3
-        time_for_keep_history_for_aiming_action = time_for_confirm_consecutive_clicks * 1
+        time_for_keep_history_for_aiming_action = time_for_confirm_consecutive_clicks * 5
         time_for_keep_counter_disassembly = time_for_confirm_consecutive_clicks * 4
 
     }
