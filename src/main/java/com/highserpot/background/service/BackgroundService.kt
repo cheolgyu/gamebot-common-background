@@ -130,7 +130,7 @@ class BackgroundService : BackgroundServiceMP() {
 
     fun tflite_bitmap(bitmap: Bitmap): ActionInfo? {
 
-        val res = detect_run!!.get_results_bitmap(bitmap, lastProcessingTimeMs)
+        val res = detect_run!!.get_results_bitmap(bitmap)
         var action_info: ActionInfo? = null
 
         if (res.isNotEmpty()) {
@@ -157,6 +157,12 @@ class BackgroundService : BackgroundServiceMP() {
                         bsView.draw_rect_show(res)
                     }
                 }
+
+                //분해카운터
+                Handler(Looper.getMainLooper()).post {
+                    bsView.update_tv_disassembly_counter()
+                }
+
 
                 //알림발송
                 if (kakao_send_notify && notify != null && notify.getBoolean("use")) {

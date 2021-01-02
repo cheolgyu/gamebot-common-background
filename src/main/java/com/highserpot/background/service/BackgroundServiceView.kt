@@ -15,6 +15,7 @@ import com.google.android.gms.ads.AdView
 import com.highserpot.background.*
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
+import com.highserpot.background.service.BackgroundServiceMP.Companion.disassembly_counter
 import com.highserpot.tf.tflite.Classifier
 import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.talk.TalkApiClient
@@ -32,6 +33,7 @@ class BackgroundServiceView(var ctx: Context) {
     lateinit var btn_on_off: ImageView
     lateinit var area_on_off: LinearLayout
     lateinit var rect_switch: Switch
+    lateinit var tv_disassembly_counter: TextView
     lateinit var utils: Utils
     lateinit var manager: WindowManager
 
@@ -45,6 +47,10 @@ class BackgroundServiceView(var ctx: Context) {
         load_view_effect()
         load_view_rect()
 
+    }
+
+    fun update_tv_disassembly_counter() {
+        tv_disassembly_counter.text = disassembly_counter.toString()
     }
 
     var TAG = "카카오"
@@ -167,6 +173,14 @@ class BackgroundServiceView(var ctx: Context) {
 
     @SuppressLint("ClickableViewAccessibility")
     fun listener_load_view() {
+
+        tv_disassembly_counter = onTopView.findViewById<TextView>(R.id.tv_disassembly_counter)
+        var tv_disassembly_counter_init =
+            onTopView.findViewById<Button>(R.id.tv_disassembly_counter_init)
+        tv_disassembly_counter_init.setOnClickListener {
+            disassembly_counter = 0
+            update_tv_disassembly_counter()
+        }
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout

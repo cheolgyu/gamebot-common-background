@@ -132,6 +132,29 @@
 
                 <TableRow>
 
+
+                    <TextView
+                        android:padding="3dip"
+                        android:text="@string/disassembly_counter"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_disassembly_counter"
+                        android:padding="3dip"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="#FF0000"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/tv_disassembly_counter_init"
+                        android:padding="3dip"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textStyle="bold"
+                        android:text="@string/disassembly_counter_init"
+                        />
+                </TableRow>
+
+                <TableRow>
+
                     <Button
                         android:id="@+id/kakao_send"
                         android:layout_width="wrap_content"
