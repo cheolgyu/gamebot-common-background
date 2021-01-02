@@ -135,9 +135,10 @@ class BackgroundService : BackgroundServiceMP() {
 
         if (res.isNotEmpty()) {
             var target = res[0]
+            val notify = target.lb.optJSONObject("notify")
             if (target.click) {
                 var action = target.lb.getString("action")
-                val notify = target.lb.optJSONObject("notify")
+
 
                 var xy = utils.click_xy(target.getLocation())
 
@@ -151,12 +152,6 @@ class BackgroundService : BackgroundServiceMP() {
                     action_info = ActionInfo(xy.get(0), xy.get(1), action)
                 }
 
-                //박스보이게
-                if (bsView.rect_view_visible()) {
-                    Handler(Looper.getMainLooper()).post {
-                        bsView.draw_rect_show(res)
-                    }
-                }
 
                 //분해카운터
                 Handler(Looper.getMainLooper()).post {
@@ -164,10 +159,18 @@ class BackgroundService : BackgroundServiceMP() {
                 }
 
 
-                //알림발송
-                if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
-                    notify_kakao(notify.getString("txt"))
+            }
+
+            //박스보이게
+            if (bsView.rect_view_visible()) {
+                Handler(Looper.getMainLooper()).post {
+                    bsView.draw_rect_show(res)
                 }
+            }
+
+            //알림발송
+            if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
+                notify_kakao(notify.getString("txt"))
             }
 
         }
