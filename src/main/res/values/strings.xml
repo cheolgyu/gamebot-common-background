@@ -1,5 +1,4 @@
 <resources>
-    <string name="NATIVE_APP_KEY">bf0335fc98f5ce0025b31377986a4e14</string>
     <string name="model">ssd_mobilenet</string>
     <string name="manual">manual</string>
     <string name="app_name">스톤에이지월드 하자</string>

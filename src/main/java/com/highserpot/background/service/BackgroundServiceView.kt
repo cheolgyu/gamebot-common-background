@@ -15,12 +15,8 @@ import com.google.android.gms.ads.AdView
 import com.highserpot.background.*
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
-import com.highserpot.background.service.BackgroundServiceMP.Companion.disassembly_counter
 import com.highserpot.tf.tflite.Classifier
-import com.kakao.sdk.auth.TokenManager
-import com.kakao.sdk.talk.TalkApiClient
-import com.kakao.sdk.template.model.Link
-import com.kakao.sdk.template.model.TextTemplate
+
 
 class BackgroundServiceView(var ctx: Context) {
 
@@ -33,7 +29,6 @@ class BackgroundServiceView(var ctx: Context) {
     lateinit var btn_on_off: ImageView
     lateinit var area_on_off: LinearLayout
     lateinit var rect_switch: Switch
-    lateinit var tv_disassembly_counter: TextView
     lateinit var utils: Utils
     lateinit var manager: WindowManager
 
@@ -49,51 +44,6 @@ class BackgroundServiceView(var ctx: Context) {
 
     }
 
-    fun update_tv_disassembly_counter() {
-        tv_disassembly_counter.text = disassembly_counter.toString()
-    }
-
-    var TAG = "카카오"
-
-    fun usable_notify_kakao(): Boolean {
-        val chk = TokenManager.instance.getToken()
-        if (chk != null) {
-            return true
-        } else {
-            Toast.makeText(
-                ctx,
-                ctx.getString(R.string.kakao_login_need),
-                Toast.LENGTH_SHORT
-            ).show()
-            return false
-        }
-
-    }
-
-    fun kakao_send() {
-        if (usable_notify_kakao()) {
-            val title_bag_over = "즐거운 하루되세요."
-            val defaultText = TextTemplate(
-                text = title_bag_over + """ """.trimIndent(),
-                link = Link(
-                    webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
-                    mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
-                )
-            )
-
-
-            TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
-                if (error != null) {
-                    Log.e(TAG, "나에게 보내기 실패", error)
-
-                } else {
-                    Log.i(TAG, "나에게 보내기 성공")
-                }
-            }
-        }
-
-
-    }
 
     fun draw_effect(x: Float, y: Float) {
         (effectView as PointLayout).draw(x, y)
@@ -174,19 +124,11 @@ class BackgroundServiceView(var ctx: Context) {
     @SuppressLint("ClickableViewAccessibility")
     fun listener_load_view() {
 
-        tv_disassembly_counter = onTopView.findViewById<TextView>(R.id.tv_disassembly_counter)
-        var tv_disassembly_counter_init =
-            onTopView.findViewById<Button>(R.id.tv_disassembly_counter_init)
-        tv_disassembly_counter_init.setOnClickListener {
-            disassembly_counter = 0
-            update_tv_disassembly_counter()
-        }
+
 
         btn_on_off = onTopView.findViewById(R.id.btn_on_off)
         area_on_off = onTopView.findViewById(R.id.area_on_off) as LinearLayout
-//        onTopView.findViewById<Button>(R.id.kakao_send).setOnClickListener {
-//            this.kakao_send()
-//        }
+
 
         onTopView.findViewById<Switch>(R.id.clickable_switch)
             .setOnCheckedChangeListener { buttonView, isChecked ->

@@ -14,9 +14,6 @@ import com.highserpot.background.R
 import com.highserpot.background.Utils
 import com.highserpot.background.notification.Noti
 import com.highserpot.background.user_calickable
-import com.kakao.sdk.talk.TalkApiClient
-import com.kakao.sdk.template.model.Link
-import com.kakao.sdk.template.model.TextTemplate
 import java.nio.ByteBuffer
 
 
@@ -95,25 +92,6 @@ class BackgroundService : BackgroundServiceMP() {
         return null
     }
 
-    fun notify_kakao(string: String) {
-        val title = string
-        val defaultText = TextTemplate(
-            text = title + """ """.trimIndent(),
-            link = Link(
-                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.rok",
-                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.rok"
-            )
-        )
-        val TAG = "카카오"
-        TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
-            if (error != null) {
-                Log.e(TAG, "나에게 보내기 실패", error)
-            } else {
-                Log.i(TAG, "나에게 보내기 성공")
-            }
-        }
-    }
-
     class ActionInfo {
         var x: Float = 0.0f
         var y: Float = 0.0f
@@ -153,12 +131,6 @@ class BackgroundService : BackgroundServiceMP() {
                 }
 
 
-                //분해카운터
-                Handler(Looper.getMainLooper()).post {
-                    bsView.update_tv_disassembly_counter()
-                }
-
-
             }
 
             //박스보이게
@@ -168,10 +140,6 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
 
-            //알림발송
-            if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
-                notify_kakao(notify.getString("txt"))
-            }
 
         }
 
@@ -200,18 +168,18 @@ class BackgroundService : BackgroundServiceMP() {
                     if (bitmap != null && detect_run != null && !isInterrupted) {
                         val startTime = SystemClock.uptimeMillis()
                         RUN_DETECT = true
-                        var arr: FloatArray? = tflite_bitmap(bitmap)
+                        var act_info: ActionInfo? = tflite_bitmap(bitmap)
                         RUN_DETECT = false
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
                         Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_capture + "ms")
                         Log.d("시간", "tflite_run:  : " + lastProcessingTimeMs + "ms")
-                        if (arr != null) {
-                            val x = arr.get(0)
-                            val y = arr.get(1)
+                        if (act_info != null) {
+                            val x = act_info.x
+                            val y = act_info.y
 
                             if (!bsView.tv_RectF.contains(x, y)) {
                                 if (user_calickable) {
-                                    touchService.click(x, y)
+                                    touchService.click(act_info)
                                 }
                                 Handler(Looper.getMainLooper()).post {
                                     bsView.draw_effect(x, y)

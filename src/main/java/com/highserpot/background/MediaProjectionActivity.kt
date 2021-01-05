@@ -14,11 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.highserpot.background.service.BackgroundService
-import com.kakao.sdk.auth.LoginClient
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.common.util.Utility
-import com.kakao.sdk.user.UserApiClient
+
 
 open class MediaProjectionActivity : AppCompatActivity() {
     var mIntent: Intent? = null
@@ -47,63 +43,20 @@ open class MediaProjectionActivity : AppCompatActivity() {
             stopService(mIntent!!)
         }
 
-        var keyHash = Utility.getKeyHash(this)
-        Log.d("keyHash", keyHash)
-        KakaoSdk.init(this, getString(R.string.NATIVE_APP_KEY))
 
         CheckTouch(applicationContext).checkAccessibilityPermissions()
 
     }
 
-    var TAG = "카카오"
-    fun login_kakao(view: View?) {
-        // 로그인 조합 예제
-
-// 로그인 공통 callback 구성
-        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-            if (error != null) {
-                Log.e(TAG, "로그인 실패", error)
-            } else if (token != null) {
-                Log.i(TAG, "로그인 성공 ${token.accessToken}")
-                Toast.makeText(
-                    this,
-                    getString(R.string.kakao_login_succeed),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-
-            }
-        }
-
-// 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-        if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
-            LoginClient.instance.loginWithKakaoTalk(this, callback = callback)
-        } else {
-            LoginClient.instance.loginWithKakaoAccount(this, callback = callback)
-        }
-
-        // 토큰 정보 보기
-        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
-            if (error != null) {
-                Log.e(TAG, "토큰 정보 보기 실패", error)
-            } else if (tokenInfo != null) {
-                Log.i(
-                    TAG, "토큰 정보 보기 성공" +
-                            "\n회원번호: ${tokenInfo.id}" +
-                            "\n만료시간: ${tokenInfo.expiresIn} 초"
-                )
-            }
-        }
-    }
 
     fun click_setting_btn(view: View?) {
-        if (CheckTouch(this).checkAccessibilityPermissions()){
+        if (CheckTouch(this).checkAccessibilityPermissions()) {
             Toast.makeText(
                 this,
                 this.getString(R.string.clickable),
                 Toast.LENGTH_SHORT
             ).show()
-        }else{
+        } else {
             stopService(mIntent)
             CheckTouch(this).setAccessibilityPermissions()
 

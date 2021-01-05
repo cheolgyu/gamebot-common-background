@@ -1,12 +1,9 @@
 package com.highserpot.tf.store
 
 import android.util.Log
-import com.highserpot.background.service.BackgroundServiceMP.Companion.disassembly_counter
-import com.highserpot.background.service.BackgroundServiceMP.Companion.lastProcessingTimeMs
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.tflite.Classifier
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ScreenHistory {
     // 상태내역: 이전 상태에 따라 클릭해야될 경우
@@ -31,6 +28,7 @@ class ScreenHistory {
     // 히스토리 유지시간 초
     // 분해카운터내역 유지시간
     var time_for_keep_counter_disassembly: Long = 0
+
     // time_for_keep_history_for_status= 분해 전체 분해완료 후 메뉴+절전모드
     var time_for_keep_history_for_status: Long = 0
     var time_for_keep_history_for_aiming: Long = 0
@@ -48,7 +46,7 @@ class ScreenHistory {
     }
 
     val TAG = this.javaClass.name
-    val USE_STATUS = true
+    val USE_STATUS = false
 
 
     fun change_order(detections: ArrayList<Classifier.Recognition>): ArrayList<Classifier.Recognition> {
@@ -71,8 +69,8 @@ class ScreenHistory {
             "시간.time_for_keep_history_for_aiming_action     ${TAG}=${time_for_keep_history_for_aiming_action}"
         )
         Log.d(
-                TAG,
-        "시간.time_for_keep_counter_disassembly               ${TAG}=${time_for_keep_counter_disassembly}"
+            TAG,
+            "시간.time_for_keep_counter_disassembly               ${TAG}=${time_for_keep_counter_disassembly}"
         )
         val started: Long = System.currentTimeMillis()
         var res: ArrayList<Classifier.Recognition> = detections
@@ -149,18 +147,13 @@ class ScreenHistory {
             history_for_status.put(started, cur_status)
 
 
-            if (cur_status == ScreenStatus.BAG_DISSASSEMBLE_RESULT){
-                if (history_for_counter_disassembly.size == 0){
-                    disassembly_counter++
-                }
-                history_for_counter_disassembly.add(started)
 
-            }
         }
         history_for_aiming.put(started, item.lb.getInt("id"))
 
         // 히스토리 업데이트
-        history_for_counter_disassembly = history_for_counter_disassembly.filter { it > started - time_for_keep_counter_disassembly } as ArrayList<Long>
+        history_for_counter_disassembly =
+            history_for_counter_disassembly.filter { it > started - time_for_keep_counter_disassembly } as ArrayList<Long>
         history_for_aiming =
             history_for_aiming.filterKeys { it > started - time_for_keep_history_for_aiming } as MutableMap<Long, Int>
         history_for_aiming_action =
@@ -310,20 +303,7 @@ class ScreenHistory {
             val common_item: Classifier.Recognition? =
                 detections.find { it.lb.getJSONArray("screens").length() > 1 }
             if (common_item != null) {
-//                val get_history =
-//                    history_for_status.filterKeys { it > started - time_for_common_status }
-//                        .toSortedMap(reverseOrder())
 
-                // 특정 화면체크
-                history_for_status.forEach { (_, u) ->
-                    if (u == ScreenStatus.BAG_DISSASSEMBLE_RESULT) {
-                        res.detections.remove(common_item)
-                        common_item?.click = true
-                        res.detections.add(0, common_item!!)
-                        res.update = true
-                        Log.d(TAG, "분해카운터               ${TAG}=${disassembly_counter}")
-                    }
-                }
             }
         }
 
