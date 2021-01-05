@@ -22,8 +22,8 @@ class Run(val context: Context) {
     private var sensorOrientation: Int? = null
     private var timestamp: Long = 0
 
-    private val IS_MODEL_QUANTIZED = false
-    private val MODEL_FILE = "detect.tflite"
+    private val IS_MODEL_QUANTIZED = true
+    private val MODEL_FILE = "detect-fp16.tflite"
 
     var detector: Classifier? = null
     private var croppedBitmap: Bitmap? = null

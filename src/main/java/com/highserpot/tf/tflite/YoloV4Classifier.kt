@@ -10,7 +10,6 @@ import com.highserpot.background.service.BackgroundServiceMP.Companion.history
 import com.highserpot.background.service.BackgroundServiceMP.Companion.lastProcessingTimeMs
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.env.Utils
-import com.highserpot.tf.store.ScreenHistory
 import org.json.JSONArray
 import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
@@ -336,7 +335,7 @@ class YoloV4Classifier(override var run_state: Boolean) : Classifier {
         private const val INPUT_SIZE_H = BuildConfig.MODEL_INPUT_SIZE_H
 
         // Number of threads in the java app
-        private const val NUM_THREADS = 10
+        private const val NUM_THREADS = 4
         private const val isNNAPI = false
         private const val isGPU = false
 
