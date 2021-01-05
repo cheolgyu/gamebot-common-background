@@ -96,7 +96,6 @@ class BackgroundService : BackgroundServiceMP() {
     }
 
     fun notify_kakao(string: String) {
-        Log.d("클릭 notify_kakao", string.toString())
         val title = string
         val defaultText = TextTemplate(
             text = title + """ """.trimIndent(),
@@ -115,44 +114,68 @@ class BackgroundService : BackgroundServiceMP() {
         }
     }
 
-    fun tflite_bitmap(bitmap: Bitmap): FloatArray? {
+    class ActionInfo {
+        var x: Float = 0.0f
+        var y: Float = 0.0f
+        lateinit var action_type: String
 
-        val res = detect_run!!.get_results_bitmap(bitmap, lastProcessingTimeMs)
-
-
-        var c_xy: FloatArray? = null
-        if (res.isNotEmpty()) {
-            c_xy = utils.click_xy(res[0].getLocation())
-        }
-        Log.d("클릭 객체", res.toString())
-
-        if (res.isNotEmpty() && bsView.rect_view_visible()) {
-            Handler(Looper.getMainLooper()).post(Runnable {
-                bsView.draw_rect_show(res)
-            })
+        constructor(x: Float, y: Float, action_type: String) : this() {
+            this.x = x
+            this.y = y
+            this.action_type = action_type
         }
 
+        constructor()
+    }
+
+    fun tflite_bitmap(bitmap: Bitmap): ActionInfo? {
+
+        val res = detect_run!!.get_results_bitmap(bitmap)
+        var action_info: ActionInfo? = null
+
         if (res.isNotEmpty()) {
-            //루프중 이번 인식목록의 글릭가능 가능여부는 인식목록 안에 있는 객체의 click에 저장함.
-            Log.d("클릭 객체", (!res[0].click).toString())
-            if (!res[0].click) {
-                val notify = res[0].lb.optJSONObject("notify")
-                Log.d("클릭 kakao_send_notify", kakao_send_notify.toString())
-                if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
-                    notify_kakao(notify.getString("txt"))
+            var target = res[0]
+            val notify = target.lb.optJSONObject("notify")
+            if (target.click) {
+                var action = target.lb.getString("action")
+
+
+                var xy = utils.click_xy(target.getLocation())
+
+                if (action == "no_action") {
+                    action_info = null
+                } else if (xy != null && action == "click") {
+                    action_info = ActionInfo(xy.get(0), xy.get(1), action)
+                } else if (xy != null && action == "swipe") {
+                    var t_rect = target.getLocation()
+                    t_rect.left
+                    action_info = ActionInfo(xy.get(0), xy.get(1), action)
                 }
 
+
+                //분해카운터
+                Handler(Looper.getMainLooper()).post {
+                    bsView.update_tv_disassembly_counter()
+                }
+
+
             }
 
-            // lb.click_object: 인식객체가 클릭객체 인지 아닌지의 구분
-            if (!res[0].lb.getBoolean("click_object")) {
-
-
-                return null
+            //박스보이게
+            if (bsView.rect_view_visible()) {
+                Handler(Looper.getMainLooper()).post {
+                    bsView.draw_rect_show(res)
+                }
             }
+
+            //알림발송
+            if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
+                notify_kakao(notify.getString("txt"))
+            }
+
         }
 
-        return c_xy
+        return action_info
     }
 
     inner class BackgroundThread : Thread() {

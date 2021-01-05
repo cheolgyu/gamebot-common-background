@@ -21,6 +21,8 @@
     <string name="clickable">클릭권한이 있습니다.</string>
     <string name="need_click">클릭권한이 필요합니다.</string>
     <string name="clickable_switch">클릭</string>
+    <string name="disassembly_counter">분해 카운터</string>
+    <string name="disassembly_counter_init">초기화</string>
     <string name="clickable_switch_on">사용</string>
     <string name="clickable_switch_off">안함</string>
 

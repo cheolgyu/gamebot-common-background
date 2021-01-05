@@ -81,7 +81,8 @@
                         android:textOff="@string/over_stop_txt"
                         android:textOn="@string/over_start_txt"
                         android:textStyle="bold"
-                        android:theme="@style/CustomAppTheme" />
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 </TableRow>
 
@@ -102,7 +103,8 @@
                         android:textOff="@string/rect_layout_stop_txt"
                         android:textOn="@string/rect_layout_start_txt"
                         android:textStyle="bold"
-                        android:theme="@style/CustomAppTheme" />
+                        android:theme="@style/CustomAppTheme"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 </TableRow>
 
