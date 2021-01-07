@@ -12,11 +12,10 @@ import android.util.Log
 import android.widget.Toast
 import com.highserpot.background.R
 import com.highserpot.background.Utils
+import com.highserpot.background.effect.PointLayout
+import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.notification.Noti
 import com.highserpot.background.user_calickable
-import com.kakao.sdk.talk.TalkApiClient
-import com.kakao.sdk.template.model.Link
-import com.kakao.sdk.template.model.TextTemplate
 import java.nio.ByteBuffer
 
 
@@ -95,25 +94,6 @@ class BackgroundService : BackgroundServiceMP() {
         return null
     }
 
-    fun notify_kakao(string: String) {
-        val title = string
-        val defaultText = TextTemplate(
-            text = title + """ """.trimIndent(),
-            link = Link(
-                webUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2",
-                mobileWebUrl = "https://play.google.com/store/apps/details?id=com.highserpot.sk2"
-            )
-        )
-        val TAG = "카카오"
-        TalkApiClient.instance.sendDefaultMemo(defaultText) { error ->
-            if (error != null) {
-                Log.e(TAG, "나에게 보내기 실패", error)
-            } else {
-                Log.i(TAG, "나에게 보내기 성공")
-            }
-        }
-    }
-
     class ActionInfo {
         var x: Float = 0.0f
         var y: Float = 0.0f
@@ -168,10 +148,6 @@ class BackgroundService : BackgroundServiceMP() {
                 }
             }
 
-            //알림발송
-            if (kakao_send_notify && notify != null && notify.getBoolean("use")) {
-                notify_kakao(notify.getString("txt"))
-            }
 
         }
 
@@ -203,6 +179,12 @@ class BackgroundService : BackgroundServiceMP() {
                         var act_info: ActionInfo? = tflite_bitmap(bitmap)
                         RUN_DETECT = false
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+
+                        //이펙트뷰 출력 시간
+                        val rect_sec = (lastProcessingTimeMs/2).toInt()
+                        (bsView.rectView as RectLayout).sec = rect_sec
+                        (bsView.effectView as PointLayout).sec = rect_sec
+
                         Log.d("시간", "bitmap to jpg: " + lastProcessingTimeMs_capture + "ms")
                         Log.d("시간", "tflite_run:  : " + lastProcessingTimeMs + "ms")
                         if (act_info != null) {

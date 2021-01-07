@@ -22,15 +22,15 @@ class PointLayout @JvmOverloads constructor(
 
     fun get_image_view(cx: Float, cy: Float): ImageView {
         return ImageView(this.context).apply {
-            if(user_calickable){
+            if (user_calickable) {
                 setImageResource(R.drawable.ic_baseline_pets_100)
-            }else{
+            } else {
                 setImageResource(R.drawable.ic_baseline_pets_disable)
             }
 
             setBackgroundColor(Color.TRANSPARENT)
-            x = cx- drawable.intrinsicWidth / 2
-            y = cy-drawable.intrinsicHeight / 2
+            x = cx - drawable.intrinsicWidth / 2
+            y = cy - drawable.intrinsicHeight / 2
         }
     }
 

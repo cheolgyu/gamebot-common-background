@@ -20,7 +20,7 @@ import com.highserpot.tf.tflite.Classifier
 class RectLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr) {
-     var color : Int
+    var color: Int
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -28,7 +28,7 @@ class RectLayout @JvmOverloads constructor(
         color = context.applicationContext.getColor(R.color.box)
     }
 
-    val sec = 300
+    var sec = 300
 
     fun get_image_view(location: RectF): ImageView {
         val sd = ShapeDrawable().apply {
@@ -52,15 +52,15 @@ class RectLayout @JvmOverloads constructor(
         return iv
     }
 
-    fun get_image_view_label(location: RectF, txt:String): TextView {
+    fun get_image_view_label(location: RectF, txt: String): TextView {
 
         var label = TextView(this.context).apply {
             textSize = 50f
             x = location.left
-            y = location.top-(textSize+20f)
-            text = txt+" "
+            y = location.top - (textSize + 20f)
+            text = txt + " "
             setBackgroundColor(Color.WHITE)
-            setTypeface(null,Typeface.BOLD_ITALIC)
+            setTypeface(null, Typeface.BOLD_ITALIC)
             setTextColor(color)
         }
 
@@ -69,7 +69,7 @@ class RectLayout @JvmOverloads constructor(
 
     fun make_item(location: RectF, title: String) {
         var iv = get_image_view(location)
-        var tv = get_image_view_label(location,title)
+        var tv = get_image_view_label(location, title)
 
         this.addView(iv)
         this.addView(tv)
@@ -86,12 +86,12 @@ class RectLayout @JvmOverloads constructor(
     fun show(list: List<Classifier.Recognition>) {
 
         for (item in list) {
-            make_item(item.getLocation(),item.lb.getString("name"))
+            make_item(item.getLocation(), item.lb.getString("name"))
         }
     }
 
-    fun show_lable(item: RectF, lable:String) {
-        make_item(item,lable)
+    fun show_lable(item: RectF, lable: String) {
+        make_item(item, lable)
     }
 
 

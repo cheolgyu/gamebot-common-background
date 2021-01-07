@@ -39,10 +39,10 @@ class ScreenHistory {
     fun set_time(in_time: Long) {
         val time = in_time * 2
         time_for_confirm_consecutive_clicks = time * 1
-        time_for_common_status = time_for_confirm_consecutive_clicks * 6
-        time_for_keep_history_for_status = time_for_common_status * 6
+        time_for_common_status = time_for_confirm_consecutive_clicks * 1
+        time_for_keep_history_for_status = time_for_common_status * 1
         time_for_keep_history_for_aiming = time_for_confirm_consecutive_clicks * 3
-        time_for_keep_history_for_aiming_action = time_for_confirm_consecutive_clicks * 5
+        time_for_keep_history_for_aiming_action = time_for_confirm_consecutive_clicks * 3
         time_for_keep_counter_disassembly = time_for_confirm_consecutive_clicks * 4
 
     }
@@ -85,7 +85,7 @@ class ScreenHistory {
                 res = updateDetectList.detections
 
             }
-
+            Log.d(TAG, "0번쨰1=${res[0].lb.getString("action")}")
             history_for_aiming_action =
                 history_for_aiming_action.filterKeys { it > started - time_for_keep_history_for_aiming_action } as MutableMap<Long, Int>
             res.forEachIndexed { index, it ->
@@ -108,12 +108,12 @@ class ScreenHistory {
                 }
 
             }
-
+            Log.d(TAG, "0번쨰2=${res[0].lb.getString("action")},${res[0]}")
             if (!res[0].click && res.size > 1 && !updateDetectList.update) {
                 Collections.swap(res, 0, res.lastIndex);
             }
 
-
+            Log.d(TAG, "0번쨰3=${res[0].lb.getString("action")},${res[0]}")
             update_history(started, res[0], updateDetectList.update)
             Log.d(TAG, "0번쨰=${res[0]}")
             Log.d(TAG, "res =${res}")
@@ -149,7 +149,7 @@ class ScreenHistory {
             history_for_status.put(started, cur_status)
 
 
-            if (cur_status == ScreenStatus.BAG_DISSASSEMBLE_RESULT){
+            if (cur_status == ScreenStatus.HUNTING_BOOK_COMPLETE){
                 if (history_for_counter_disassembly.size == 0){
                     disassembly_counter++
                 }
@@ -204,6 +204,19 @@ class ScreenHistory {
         }
         Log.d(TAG, "toClickList=${toClickList.toString()}")
         Log.d(TAG, "toClickList+toClickList=${toClickList.toString()}")
+
+
+
+        //나머지는 클릭안되게 처리하기
+        if(toClickList.size > 0){
+            detections.forEach { it ->
+
+                if ("no_action" != it.lb.getString("action") && it.lb.getJSONArray("screens").length()==1) {
+                    //it.lb.put("action","no_action")
+                }
+            }
+        }
+
         //클릭할 아이템목록 먼저오고 나머지
         toClickList.addAll(detections)
 
@@ -309,6 +322,7 @@ class ScreenHistory {
         if (USE_STATUS) {
             val common_item: Classifier.Recognition? =
                 detections.find { it.lb.getJSONArray("screens").length() > 1 }
+            Log.d(TAG, "common_item=${common_item}")
             if (common_item != null) {
 //                val get_history =
 //                    history_for_status.filterKeys { it > started - time_for_common_status }
@@ -316,7 +330,7 @@ class ScreenHistory {
 
                 // 특정 화면체크
                 history_for_status.forEach { (_, u) ->
-                    if (u == ScreenStatus.BAG_DISSASSEMBLE_RESULT) {
+                    if (u == ScreenStatus.HUNTING_BOOK_COMPLETE) {
                         res.detections.remove(common_item)
                         common_item?.click = true
                         res.detections.add(0, common_item!!)
