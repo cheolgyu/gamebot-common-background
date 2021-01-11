@@ -8,6 +8,7 @@ import android.util.Log
 import com.highserpot.background.BuildConfig
 import com.highserpot.background.service.BackgroundServiceMP.Companion.history
 import com.highserpot.background.service.BackgroundServiceMP.Companion.lastProcessingTimeMs
+import com.highserpot.background.service.BackgroundServiceMP.Companion.target
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.env.Utils
 import org.json.JSONArray
@@ -252,6 +253,9 @@ class YoloV4Classifier(override var run_state: Boolean) : Classifier {
             detections = getDetectionsForTiny(byteBuffer, bitmap)
             var detections_nms = nms(detections)
             Log.d("찾기", "전-c=${detections_nms}")
+            //
+            target.get(lastProcessingTimeMs,detections_nms)
+            //
             history.set_time(lastProcessingTimeMs)
             var sort_detections = history.change_order(detections_nms)
             Log.d("찾기", "후-detections=${sort_detections}")

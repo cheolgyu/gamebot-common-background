@@ -8,7 +8,59 @@ import com.highserpot.tf.tflite.Classifier
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+        ==============
+        1. 클릭대상 선정은? ==> 클릭대상목록 만들기, 유효한 객체들
+        인식시간 * 2 시간에 인식된것이 인식시간횟수 만큼 있다면 인식된 것으로 처리한다.
+        인식시간 * 3 시간 안에 인식횟수가 인식시간횟수 만큼 있어야 인식된 것으로 처리한다.
+        시간, lb를 만들어서 저장한다. 이전 목록을 저장한다.
+        ==============
+        2. 액션대상 선정은?
+        -----------------
+        2-1. 내가정한 액션대상 선정
+        정규식을 통해 선정되면 번갈아 선정에서 제외한다.
+        2-2. 번갈아 액션대상 선정
+        내가 정한 액션대상에 선정되지 않으면 번갈아 선정한다.
+        클릭대상이 선정되면 액션목록의  마지막 값에 따라 다른것을 액션으로 선정해야된다.
+        2-3 한개의 화면에 같은 객체가 여러개 일떄
+        한개의 화면에 같은 객체가 여러개일떄는 높이가 높은것이 우선적이다.
+        ==============
+        3. 강제 액션은?
+        예) 분해결과 후에만 홈 클릭!
+        강제액션이 활성되면 선정된 액션대상의 상태값이 존재한다면 강제액션목록에 저장한다.
+        ---
+        강제액션이 활성되면
+        인식시간 * 3 시간의 강제액션 목록에 있다면 미리 만든 강제액션설정 변수에서
+        해당 액션에 해당하는 객체id을 꺼내고 선정된 클릭대상 목록에서 객체id를 찾아서
+        인식목록의 위치를 바꿔서 클릭되게 한다.
+        ==============
+         4. 지속적 액션은?
+        인식시간이 1초 보다 적으면
+        클릭대상이 선정이 되면 인식시간의 빠르기에 따라 지속적인 클릭이 되니깐
+        인식시간이 1초 미만 이면서 인식시간*2의 액션목록에 같은 객체가 있으면 취소한다.
+        ==============
+        핸드폰에서 광고영역은?
+        핸드폰에서 광고영역이 너무 크다. 애뮬과 비교해서 처리하기는 부정확하고
+        대기모드와 실행모드로 만들자.
+        대기모드는 배너이고 실행모드는 좀더큰 광고영역으로 하고 영역고정시키자.
+    */
 class ScreenHistory {
+
+    // 인식화면의 속도
+    var r_speed : Long = 0
+    fun run(){
+
+    }
+    fun valid_list(){}
+    fun select_target(){}
+    fun forced_target(){}
+    fun continuous_action(){}
+
+
+
+
+
+
     // 상태내역: 이전 상태에 따라 클릭해야될 경우
     var history_for_status: MutableMap<Long, ScreenStatus> = mutableMapOf()
 
@@ -40,9 +92,9 @@ class ScreenHistory {
         val time = in_time * 2
         time_for_confirm_consecutive_clicks = time * 1
         time_for_common_status = time_for_confirm_consecutive_clicks * 1
-        time_for_keep_history_for_status = time_for_common_status * 1
+        time_for_keep_history_for_status = time * 1
         time_for_keep_history_for_aiming = time_for_confirm_consecutive_clicks * 3
-        time_for_keep_history_for_aiming_action = time_for_confirm_consecutive_clicks * 3
+        time_for_keep_history_for_aiming_action = 0
         time_for_keep_counter_disassembly = time_for_confirm_consecutive_clicks * 4
 
     }

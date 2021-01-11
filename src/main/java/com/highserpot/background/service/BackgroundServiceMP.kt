@@ -23,6 +23,7 @@ import android.view.Surface
 import android.view.WindowManager
 import android.widget.Toast
 import com.highserpot.background.R
+import com.highserpot.tf.Target
 import com.highserpot.tf.store.ScreenHistory
 import com.highserpot.tf.tflite.Run
 
@@ -39,6 +40,7 @@ abstract class BackgroundServiceMP : Service() {
         var lastProcessingTimeMs_capture : Long = 2
         var disassembly_counter : Int = 0
         var history : ScreenHistory = ScreenHistory()
+        var target : Target = Target()
 
     }
 
