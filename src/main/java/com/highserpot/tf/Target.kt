@@ -64,14 +64,39 @@ class Target {
         this.processing_time = processing_time
         this.detections = detections
         add_history()
-        valid()
-
+        valid_history()
+        select_one()
+        after_continuous()
         rm_history()
         Log.d(TAG, "========================================")
         return this.detections
     }
 
-    fun valid() {
+    private fun select_one(): Int {
+        var first_id = 0;
+        val select_regex = select_one_by_regex()
+        if (select_regex.isEmpty()) {
+            first_id = select_one_by_other()
+        } else {
+            first_id = select_regex[0]
+        }
+
+        select_one_by_height()
+        select_force()
+        return first_id
+    }
+
+    fun select_one_by_regex(): ArrayList<Int> {
+        return chk_regex()
+    }
+
+    fun select_one_by_other(): Int {
+
+    }
+    fun select_one_by_height() {}
+    fun select_force() {}
+
+    fun valid_history() {
         var search_cnt = processing_cnt
         val same_cnt: Int
         if (processing_time > 1000) {
@@ -125,23 +150,35 @@ class Target {
 
     }
 
-    fun select_one() {}
-    fun select_one_by_regex() {}
-    fun select_one_by_other() {}
-    fun select_one_by_height() {}
-    fun select_force() {}
+
     fun after_continuous() {}
 
-    fun detections_info(): String {
+    fun chk_regex(): ArrayList<Int> {
         var id_string = ""
-        for (i in 0 until LabelInfo.labels.length()) {
-            if (detections.find { it.lb.getInt("id") == i } != null) {
-                id_string += "$i,"
-            } else {
-                id_string += "$i-,"
+        val select_regex_id = arrayListOf<Int>()
+        if (valid_id.isNotEmpty()) {
+            for (i in 0 until LabelInfo.labels.length()) {
+
+                if (valid_id.find { it == i } != null) {
+                    id_string += "$i,"
+                } else {
+                    id_string += "$i-,"
+                }
+            }
+
+            for ((k, v) in LabelInfo.regex) {
+
+                if (v.find(id_string) != null) {
+                    val rg = valid_id.find { it == k }!!
+                    select_regex_id.add(rg)
+
+                }
             }
         }
-        return id_string
+
+
+
+        return select_regex_id
     }
 
 }
