@@ -115,7 +115,7 @@ class BackgroundServiceView(var ctx: Context) {
         manager = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         manager.addView(onTopView, window_params)
 
-        load_admob()
+
         listener_load_view()
 
         onTopView.getViewTreeObserver().addOnGlobalLayoutListener(OnGlobalLayoutListener {
@@ -178,6 +178,7 @@ class BackgroundServiceView(var ctx: Context) {
                     //buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     BS_THREAD = true
                     effectView.visibility = View.VISIBLE
+                    load_admob_start()
                     Toast.makeText(
                         ctx,
                         ctx.getString(R.string.app_service_thread_start),
@@ -188,6 +189,7 @@ class BackgroundServiceView(var ctx: Context) {
                     //buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     BS_THREAD = false
                     effectView.visibility = View.INVISIBLE
+                    load_admob_stop()
                     Toast.makeText(
                         ctx,
                         ctx.getString(R.string.app_service_thread_stop),
@@ -214,9 +216,9 @@ class BackgroundServiceView(var ctx: Context) {
         })
     }
 
-    fun load_admob() {
+    fun load_admob_start() {
         Log.d("탑뷰-광고", "load_admob")
-
+        (onTopView.findViewById(R.id.always_on_top_adview) as View).visibility = View.VISIBLE
         val mAdView: AdView = onTopView.findViewById(R.id.always_on_top_adview)
         val adRequest = AdRequest.Builder().build()
         mAdView.adListener = object : AdListener() {
@@ -247,6 +249,12 @@ class BackgroundServiceView(var ctx: Context) {
             }
         }
         mAdView.loadAd(adRequest)
+    }
+
+    fun load_admob_stop(){
+        val mAdView: AdView = onTopView.findViewById(R.id.always_on_top_adview)
+        mAdView.destroy()
+        (onTopView.findViewById(R.id.always_on_top_adview) as View).visibility = View.INVISIBLE
     }
 
 

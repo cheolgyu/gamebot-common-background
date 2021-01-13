@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    ads:adSize="MEDIUM_RECTANGLE"
+                    ads:adSize="SMART_BANNER"
                     ads:adUnitId="@string/ad_banner" />
             </LinearLayout>
 
@@ -53,14 +53,14 @@
 
         <LinearLayout
             android:id="@+id/area_on_off"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TableLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:stretchColumns="1">
 
@@ -75,7 +75,6 @@
                         android:id="@+id/btn_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:showText="true"
                         android:switchMinWidth="100dp"
                         android:textOff="@string/over_stop_txt"
