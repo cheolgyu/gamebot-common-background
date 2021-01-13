@@ -76,14 +76,14 @@ class Target {
         val first_id = select_one()
         txt += "select_one = ${first_id},"
         val d_click = if (after_continuous(first_id) == null) {
-            //f_id 지속적 클릭
+            //f_id 지속적 클릭으로 클릭하면 안됨.
             txt += "after_continuous = null,"
             false
-        }else{
+        } else {
             txt += "after_continuous = y,"
             true
         }
-        swap(first_id,d_click)
+        swap(first_id, d_click)
 
         valid_remove()
         add_last_target()
@@ -91,10 +91,10 @@ class Target {
         return this.detections
     }
 
-    fun swap(first_id: Int?, d_click: Boolean){
-        if (first_id !=null){
+    fun swap(first_id: Int?, d_click: Boolean) {
+        if (first_id != null) {
             var f_index: Int? = null
-            this.detections.forEachIndexed { index, it->
+            this.detections.forEachIndexed { index, it ->
                 run {
                     if (it.lb.getInt("id") == first_id) {
                         f_index = index
@@ -102,10 +102,10 @@ class Target {
                     }
                 }
             }
-            if (f_index != null){
+            if (f_index != null) {
                 Collections.swap(this.detections, 0, f_index!!);
-                if (no_action!=this.detections.get(0).lb.getString("action") && d_click){
-                    this.detections.get(0).click= d_click
+                if (no_action != this.detections.get(0).lb.getString("action") && d_click) {
+                    this.detections.get(0).click = d_click
                 }
             }
 
@@ -153,11 +153,11 @@ class Target {
         var first_id: Int? = null
         if (last_target != null) {
 
-            if (valid_id.contains(last_target!!) ) {
+            if (valid_id.contains(last_target!!)) {
 
-                if (valid_id.size > 1){
+                if (valid_id.size > 1) {
                     first_id = valid_id.find { i -> i != last_target }
-                }else if (valid_id.size  == 1){
+                } else if (valid_id.size == 1) {
                     first_id = valid_id[0]
                 }
             }
@@ -256,26 +256,32 @@ class Target {
     }
 
     fun after_continuous(f_id: Int?): Int? {
-        val select_standard_time = start_time - processing_time * get_same_cnt()
+        val cnt = get_same_cnt() + 3
+        val select_standard_time = start_time - processing_time * cnt
         history_action =
             history_action.filterKeys { it > select_standard_time }.toSortedMap(reverseOrder())
+        Log.d("history_action","${history_action}")
+        if (f_id != null){
+            if (history_action.size > 0 ) {
+                var cc = 0
+                history_action.forEach { it ->
+                    if (it.value == f_id) {
+                        cc++
+                    }
+                }
+                if (cc == cnt) {
+                    history_action.clear()
+                    return f_id
 
-
-        if (history_action.isNotEmpty() && f_id != null && history_action.values.toList()
-                .contains(f_id)
-        ) {
-            var cc = 0
-            history_action.values.toList().forEach { if ( it == f_id ){
-                cc++
-            } }
-            if (cc == history_action.size ){
+                }
+                return null
+            } else {
+                history_action.put(start_time, f_id)
                 return f_id
             }
-            return null
-        } else {
-            return f_id
         }
 
+        return null
     }
 
     fun chk_regex(): ArrayList<Int> {
