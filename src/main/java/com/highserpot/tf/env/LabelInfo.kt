@@ -50,7 +50,8 @@ object LabelInfo {
         val jsonString = """
        {
           "forced":[
-            "3->1"
+            "3->1",
+            "8->1"
           ],
           "regex":[
               "2=(.)*,2,(.)*",

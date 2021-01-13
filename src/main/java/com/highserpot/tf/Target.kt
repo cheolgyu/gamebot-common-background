@@ -90,7 +90,7 @@ class Target {
 
         valid_remove()
         add_last_target(first_id)
-        Log.d(TAG, "txt=${txt}")
+        Log.d(TAG, "${first_id},txt=${txt}")
         return this.detections
     }
 
@@ -183,7 +183,7 @@ class Target {
     fun select_one_by_height() {}
     fun select_forced(): Int? {
         if (FORCED_SELECT) {
-            val select_standard_time = start_time - processing_time * (processing_cnt + 1)
+            val select_standard_time = start_time - processing_time * (processing_cnt + 3)
             history_forced = history_forced.filterKeys { it > select_standard_time }
                 .toSortedMap(reverseOrder())
             var first_id: Int? =
