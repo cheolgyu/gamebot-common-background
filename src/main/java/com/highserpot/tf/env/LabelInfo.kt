@@ -9,11 +9,19 @@ object LabelInfo {
     val labels: JSONArray
     val labels_vector: Vector<String>
     val regex = mutableMapOf<Int, Regex>()
+    val forced = mutableMapOf<Int, Int>()
+    val forced_key : List<Int>
 
     init {
         val jsonObject = load()
         labels = jsonObject.getJSONArray("labels")
         val items = jsonObject.getJSONArray("regex")
+        val forced_arr = jsonObject.getJSONArray("forced")
+        for (i in 0 until forced_arr.length()) {
+            val aa = forced_arr.getString(i).split("->")
+            forced.put(aa[0].toInt(), aa[1].toInt())
+        }
+        forced_key = forced.keys.toList()
 
         for (i in 0 until items.length()) {
             val aa = items.getString(i).split("=")
@@ -39,6 +47,9 @@ object LabelInfo {
     fun load(): JSONObject {
         val jsonString = """
        {
+          "forced":[
+            "3->1"
+          ],
           "regex":[
               "2=(.)*,2,(.)*",
               "3=(.)*,3,4,(.)*",

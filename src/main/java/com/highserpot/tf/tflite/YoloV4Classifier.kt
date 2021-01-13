@@ -253,11 +253,7 @@ class YoloV4Classifier(override var run_state: Boolean) : Classifier {
             detections = getDetectionsForTiny(byteBuffer, bitmap)
             var detections_nms = nms(detections)
             Log.d("찾기", "전-c=${detections_nms}")
-            //
-            target.get(lastProcessingTimeMs,detections_nms)
-            //
-            history.set_time(lastProcessingTimeMs)
-            var sort_detections = history.change_order(detections_nms)
+            var sort_detections = target.get(lastProcessingTimeMs,detections_nms)
             Log.d("찾기", "후-detections=${sort_detections}")
 
             return sort_detections

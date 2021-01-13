@@ -4,6 +4,8 @@ import android.os.SystemClock
 import android.util.Log
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.tflite.Classifier
+import java.util.*
+import kotlin.collections.ArrayList
 
 /*
         1. 클릭대상 선정은? ==> 클릭대상목록 만들기, 유효한 객체들
@@ -41,48 +43,105 @@ import com.highserpot.tf.tflite.Classifier
     */
 class Target {
     val TAG = this.javaClass.simpleName
-    var FORCE_SELECT = false
+    var FORCED_SELECT = false
 
     var processing_time: Long = 0
     var processing_cnt: Int = 3
     var start_time: Long = 0
     var detections: ArrayList<Classifier.Recognition> = arrayListOf()
-    var history: MutableMap<Long, MutableList<Int>> = mutableMapOf()
+    var history_valid: MutableMap<Long, MutableList<Int>> = mutableMapOf()
+    var history_forced: MutableMap<Long, Int> = mutableMapOf()
+    var history_action: MutableMap<Long, Int> = mutableMapOf()
+    var last_target: Int? = null
     var valid_id: MutableList<Int> = mutableListOf()
+    var txt = ""
+    val no_action = "no_action"
 
     init {
-        FORCE_SELECT = true
+        FORCED_SELECT = true
     }
 
     fun get(
         processing_time: Long,
         detections: ArrayList<Classifier.Recognition>
     ): ArrayList<Classifier.Recognition> {
+        txt = ""
         Log.d(TAG, "========================================")
-        Log.d(TAG, "history=${history}")
+        Log.d(TAG, "history=${history_valid}")
         this.start_time = SystemClock.uptimeMillis()
         this.processing_time = processing_time
         this.detections = detections
-        add_history()
-        valid_history()
-        select_one()
-        after_continuous()
-        rm_history()
-        Log.d(TAG, "========================================")
+        valid_add()
+        valid()
+        val first_id = select_one()
+        txt += "select_one = ${first_id},"
+        val d_click = if (after_continuous(first_id) == null) {
+            //f_id 지속적 클릭
+            txt += "after_continuous = null,"
+            false
+        }else{
+            txt += "after_continuous = y,"
+            true
+        }
+        swap(first_id,d_click)
+
+        valid_remove()
+        add_last_target()
+        Log.d(TAG, "txt=${txt}")
         return this.detections
     }
 
-    private fun select_one(): Int {
-        var first_id = 0;
-        val select_regex = select_one_by_regex()
-        if (select_regex.isEmpty()) {
-            first_id = select_one_by_other()
-        } else {
-            first_id = select_regex[0]
-        }
+    fun swap(first_id: Int?, d_click: Boolean){
+        if (first_id !=null){
+            var f_index: Int? = null
+            this.detections.forEachIndexed { index, it->
+                run {
+                    if (it.lb.getInt("id") == first_id) {
+                        f_index = index
+                        return@forEachIndexed
+                    }
+                }
+            }
+            if (f_index != null){
+                Collections.swap(this.detections, 0, f_index!!);
+                if (no_action!=this.detections.get(0).lb.getString("action") && d_click){
+                    this.detections.get(0).click= d_click
+                }
+            }
 
-        select_one_by_height()
-        select_force()
+        }
+    }
+
+    private fun add_last_target() {
+        if (valid_id.isNullOrEmpty()) {
+            last_target = null
+
+        } else {
+            last_target = valid_id[0]
+
+        }
+    }
+
+    private fun select_one(): Int? {
+        var first_id: Int?;
+        val select_regex = select_one_by_regex()
+        first_id = if (select_regex.isEmpty()) {
+
+            val id = select_one_by_other()
+            txt += "select_one_by_other=${id},"
+            id
+        } else {
+            txt += "select_regex=${select_regex[0]},"
+            select_regex[0]
+        }
+        val forced_first_id = select_forced()
+        if (forced_first_id != null) {
+            txt += "forced_first_id=${forced_first_id},"
+            first_id = forced_first_id
+        } else {
+            txt += "forced_first_id=null,"
+        }
+        save_forced(first_id)
         return first_id
     }
 
@@ -90,13 +149,55 @@ class Target {
         return chk_regex()
     }
 
-    fun select_one_by_other(): Int {
+    fun select_one_by_other(): Int? {
+        var first_id: Int? = null
+        if (last_target != null) {
+
+            if (valid_id.contains(last_target!!) ) {
+
+                if (valid_id.size > 1){
+                    first_id = valid_id.find { i -> i != last_target }
+                }else if (valid_id.size  == 1){
+                    first_id = valid_id[0]
+                }
+            }
+
+        }
+
+        return first_id
+    }
+
+    fun select_one_by_height() {}
+    fun select_forced(): Int? {
+        if (FORCED_SELECT) {
+            val select_standard_time = start_time - processing_time * (processing_cnt + 1)
+            history_forced = history_forced.filterKeys { it > select_standard_time }
+                .toSortedMap(reverseOrder())
+            var first_id: Int? =
+                if (history_forced.isNotEmpty()) {
+                    val forced_id = LabelInfo.forced.get(history_forced.toList().get(0).second)
+                    if (forced_id != null && valid_id.contains(forced_id)) {
+                        forced_id
+                    } else {
+                        null
+                    }
+
+                } else {
+                    null
+                }
+            return first_id
+        }
+        return null
+    }
+
+    fun save_forced(first_id: Int?) {
+        if (FORCED_SELECT && first_id != null && LabelInfo.forced_key.contains(first_id)) {
+            history_forced.put(start_time, first_id)
+        }
 
     }
-    fun select_one_by_height() {}
-    fun select_force() {}
 
-    fun valid_history() {
+    fun get_same_cnt(): Int {
         var search_cnt = processing_cnt
         val same_cnt: Int
         if (processing_time > 1000) {
@@ -105,19 +206,23 @@ class Target {
         } else {
             same_cnt = processing_cnt - 1
         }
+        return same_cnt
+    }
 
-        val select_standard_time = start_time - processing_time * search_cnt
+    fun valid() {
+        val select_standard_time = start_time - processing_time * processing_cnt
         Log.d(TAG, "${start_time} - ${processing_time * processing_cnt} = ${select_standard_time}")
 
         val list: MutableList<List<Int>> = mutableListOf()
 
-        history.forEach { k, v ->
+        history_valid.forEach { k, v ->
             if (k > select_standard_time) {
                 list.add(v.toList())
             }
         }
         val intersection =
-            list.groupBy { it }.filter { it.value.size > same_cnt }.flatMap { it.value }.distinct()
+            list.groupBy { it }.filter { it.value.size > get_same_cnt() }.flatMap { it.value }
+                .distinct()
 
 
         if (intersection.isNotEmpty() && intersection[0].isNotEmpty()) {
@@ -133,25 +238,45 @@ class Target {
 
     }
 
-    fun rm_history() {
+    fun valid_remove() {
         val t = start_time - processing_time * (processing_cnt + 1)
 
-        history.takeIf { history.isNotEmpty() }?.apply {
-            history = filterKeys { it > t } as MutableMap<Long, MutableList<Int>>
+        history_valid.takeIf { history_valid.isNotEmpty() }?.apply {
+            history_valid = filterKeys { it > t } as MutableMap<Long, MutableList<Int>>
         }
     }
 
-    fun add_history() {
+    fun valid_add() {
         var cur = arrayListOf<Int>()
         detections.forEach {
             cur.add(it.lb.getInt("id"))
         }
-        history.put(start_time, cur)
+        history_valid.put(start_time, cur)
 
     }
 
+    fun after_continuous(f_id: Int?): Int? {
+        val select_standard_time = start_time - processing_time * get_same_cnt()
+        history_action =
+            history_action.filterKeys { it > select_standard_time }.toSortedMap(reverseOrder())
 
-    fun after_continuous() {}
+
+        if (history_action.isNotEmpty() && f_id != null && history_action.values.toList()
+                .contains(f_id)
+        ) {
+            var cc = 0
+            history_action.values.toList().forEach { if ( it == f_id ){
+                cc++
+            } }
+            if (cc == history_action.size ){
+                return f_id
+            }
+            return null
+        } else {
+            return f_id
+        }
+
+    }
 
     fun chk_regex(): ArrayList<Int> {
         var id_string = ""
