@@ -126,7 +126,7 @@ object LabelInfo {
             {
               "id": 7,
               "name": "이동-재클릭",
-              "min": 98,
+              "min": 90,
               "action": "no_action",
               "screens": [
                 "HUNTING_BOOK"
@@ -135,7 +135,7 @@ object LabelInfo {
             {
               "id": 8,
               "name": "확인",
-              "min": 98,
+              "min": 90,
               "action": "click",
               "screens": [
                 "HUNTING_BOOK"
