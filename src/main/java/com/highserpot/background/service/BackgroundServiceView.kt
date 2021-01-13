@@ -9,10 +9,9 @@ import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
 import androidx.core.graphics.drawable.DrawableCompat
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.*
 import com.highserpot.background.*
+import com.highserpot.background.R
 import com.highserpot.background.effect.PointLayout
 import com.highserpot.background.effect.RectLayout
 import com.highserpot.background.service.BackgroundServiceMP.Companion.disassembly_counter
@@ -42,7 +41,7 @@ class BackgroundServiceView(var ctx: Context) {
         load_view()
         load_view_effect()
         load_view_rect()
-
+        load_admob_start()
     }
 
     fun update_tv_disassembly_counter() {
@@ -178,7 +177,6 @@ class BackgroundServiceView(var ctx: Context) {
                     //buttonView.text = applicationContext.getString(R.string.over_start_txt)
                     BS_THREAD = true
                     effectView.visibility = View.VISIBLE
-                    load_admob_start()
                     Toast.makeText(
                         ctx,
                         ctx.getString(R.string.app_service_thread_start),
@@ -189,7 +187,6 @@ class BackgroundServiceView(var ctx: Context) {
                     //buttonView.text = applicationContext.getString(R.string.over_stop_txt)
                     BS_THREAD = false
                     effectView.visibility = View.INVISIBLE
-                    load_admob_stop()
                     Toast.makeText(
                         ctx,
                         ctx.getString(R.string.app_service_thread_stop),
@@ -218,7 +215,6 @@ class BackgroundServiceView(var ctx: Context) {
 
     fun load_admob_start() {
         Log.d("탑뷰-광고", "load_admob")
-        (onTopView.findViewById(R.id.always_on_top_adview) as View).visibility = View.VISIBLE
         val mAdView: AdView = onTopView.findViewById(R.id.always_on_top_adview)
         val adRequest = AdRequest.Builder().build()
         mAdView.adListener = object : AdListener() {
@@ -250,13 +246,6 @@ class BackgroundServiceView(var ctx: Context) {
         }
         mAdView.loadAd(adRequest)
     }
-
-    fun load_admob_stop(){
-        val mAdView: AdView = onTopView.findViewById(R.id.always_on_top_adview)
-        mAdView.destroy()
-        (onTopView.findViewById(R.id.always_on_top_adview) as View).visibility = View.INVISIBLE
-    }
-
 
     fun move(view: View, event: MotionEvent): Boolean {
         when (event.action) {
