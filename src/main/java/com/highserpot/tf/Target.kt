@@ -2,6 +2,7 @@ package com.highserpot.tf
 
 import android.os.SystemClock
 import android.util.Log
+import com.highserpot.background.service.BackgroundServiceMP
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.tflite.Classifier
 import java.util.*
@@ -106,6 +107,12 @@ class Target {
                 Collections.swap(this.detections, 0, f_index!!);
                 if (no_action != this.detections.get(0).lb.getString("action") && d_click) {
                     this.detections.get(0).click = d_click
+                    //분해카운터
+                    if (LabelInfo.forced_key.contains(first_id)){
+                        BackgroundServiceMP.disassembly_counter++
+                        Log.d("disassembly_counter","${BackgroundServiceMP.disassembly_counter}")
+                    }
+
                 }
             }
 
