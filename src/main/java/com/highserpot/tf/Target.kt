@@ -2,6 +2,7 @@ package com.highserpot.tf
 
 import android.os.SystemClock
 import android.util.Log
+import com.highserpot.background.service.BackgroundServiceMP
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.tflite.Classifier
 import java.util.*
@@ -68,6 +69,8 @@ class Target {
         txt = ""
         Log.d(TAG, "========================================")
         Log.d(TAG, "history=${history_valid}")
+        Log.d(TAG, "history_forced=${history_forced}")
+
         this.start_time = SystemClock.uptimeMillis()
         this.processing_time = processing_time
         this.detections = detections
@@ -86,7 +89,7 @@ class Target {
         swap(first_id, d_click)
 
         valid_remove()
-        add_last_target()
+        add_last_target(first_id)
         Log.d(TAG, "txt=${txt}")
         return this.detections
     }
@@ -106,20 +109,20 @@ class Target {
                 Collections.swap(this.detections, 0, f_index!!);
                 if (no_action != this.detections.get(0).lb.getString("action") && d_click) {
                     this.detections.get(0).click = d_click
+                    //분해카운터
+                    if (LabelInfo.forced_key.contains(first_id)) {
+                        BackgroundServiceMP.disassembly_counter++
+                        Log.d("disassembly_counter", "${BackgroundServiceMP.disassembly_counter}")
+                    }
+
                 }
             }
 
         }
     }
 
-    private fun add_last_target() {
-        if (valid_id.isNullOrEmpty()) {
-            last_target = null
-
-        } else {
-            last_target = valid_id[0]
-
-        }
+    private fun add_last_target(first_id: Int?) {
+        last_target = first_id
     }
 
     private fun select_one(): Int? {
@@ -127,8 +130,11 @@ class Target {
         val select_regex = select_one_by_regex()
         first_id = if (select_regex.isEmpty()) {
 
-            val id = select_one_by_other()
+            var id = select_one_by_other()
             txt += "select_one_by_other=${id},"
+            if (id == null && valid_id.size > 0) {
+                id = valid_id[0]
+            }
             id
         } else {
             txt += "select_regex=${select_regex[0]},"
@@ -150,19 +156,26 @@ class Target {
     }
 
     fun select_one_by_other(): Int? {
+        var valid_id_list = valid_id.filter { !LabelInfo.forced_value.contains(it) }
+
+
         var first_id: Int? = null
         if (last_target != null) {
 
-            if (valid_id.contains(last_target!!)) {
+            if (valid_id_list.contains(last_target!!)) {
 
-                if (valid_id.size > 1) {
-                    first_id = valid_id.find { i -> i != last_target }
-                } else if (valid_id.size == 1) {
-                    first_id = valid_id[0]
+                if (valid_id_list.size > 1) {
+                    first_id = valid_id_list.find { i -> i != last_target }
+                } else if (valid_id_list.size == 1) {
+                    first_id = valid_id_list[0]
                 }
             }
 
         }
+        if (first_id == null && valid_id_list.size > 0) {
+            first_id = valid_id_list[0]
+        }
+
 
         return first_id
     }
@@ -170,7 +183,7 @@ class Target {
     fun select_one_by_height() {}
     fun select_forced(): Int? {
         if (FORCED_SELECT) {
-            val select_standard_time = start_time - processing_time * (processing_cnt + 1)
+            val select_standard_time = start_time - processing_time * (processing_cnt + 1) * 100
             history_forced = history_forced.filterKeys { it > select_standard_time }
                 .toSortedMap(reverseOrder())
             var first_id: Int? =
@@ -231,11 +244,12 @@ class Target {
             valid_id = mutableListOf()
         }
         Log.d(TAG, "valid_id=${valid_id}")
-        //https://zion830.tistory.com/127
 
-        //https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/associate-with.html
-        //https://iosroid.tistory.com/87
+        //중복제거
+        if (valid_id.size > 1) {
+            valid_id = valid_id.distinct() as MutableList<Int>
 
+        }
     }
 
     fun valid_remove() {
@@ -260,9 +274,9 @@ class Target {
         val select_standard_time = start_time - processing_time * cnt
         history_action =
             history_action.filterKeys { it > select_standard_time }.toSortedMap(reverseOrder())
-        Log.d("history_action","${history_action}")
-        if (f_id != null){
-            if (history_action.size > 0 ) {
+        Log.d("history_action", "${history_action}")
+        if (f_id != null) {
+            if (history_action.size > 0) {
                 var cc = 0
                 history_action.forEach { it ->
                     if (it.value == f_id) {

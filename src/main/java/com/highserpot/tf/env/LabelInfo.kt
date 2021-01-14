@@ -11,6 +11,7 @@ object LabelInfo {
     val regex = mutableMapOf<Int, Regex>()
     val forced = mutableMapOf<Int, Int>()
     val forced_key : List<Int>
+    val forced_value : List<Int>
 
     init {
         val jsonObject = load()
@@ -22,6 +23,7 @@ object LabelInfo {
             forced.put(aa[0].toInt(), aa[1].toInt())
         }
         forced_key = forced.keys.toList()
+        forced_value = forced.values.toList()
 
         for (i in 0 until items.length()) {
             val aa = items.getString(i).split("=")
