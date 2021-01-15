@@ -10,8 +10,9 @@ object LabelInfo {
     val labels_vector: Vector<String>
     val regex = mutableMapOf<Int, Regex>()
     val forced = mutableMapOf<Int, Int>()
-    val forced_key : List<Int>
-    val forced_value : List<Int>
+    val forced_key: List<Int>
+    val forced_value: List<Int>
+    val count_id: List<Int>
 
     init {
         val jsonObject = load()
@@ -31,6 +32,16 @@ object LabelInfo {
         }
 
         labels_vector = set_labels_vector()
+
+        val count = mutableListOf<Int>()
+        for (i in 0 until labels.length()) {
+            val item = labels.getJSONObject(i)
+            if (item.optBoolean("count")) {
+                count.add(item.getInt("id"))
+            }
+        }
+        count_id = count.toList()
+
     }
 
     fun set_labels_vector(): Vector<String> {
@@ -41,7 +52,6 @@ object LabelInfo {
             res.add(item.get("id").toString())
 
         }
-
 
         return res
     }
@@ -75,7 +85,8 @@ object LabelInfo {
                 "BAG_BASIC",
                 "BAG_DISSASSEMBLE_ACTIVE",
                 "BAG_DISSASSEMBLE_SELECT"
-              ]
+              ],
+              "count": true
             },
             {
               "id": 1,
@@ -107,7 +118,7 @@ object LabelInfo {
             {
               "id": 4,
               "name": "일반",
-              "min": 80,
+              "min": 70,
               "action": "click",
               "screens": [
                 "BAG_DISSASSEMBLE_ACTIVE_GENERAL"

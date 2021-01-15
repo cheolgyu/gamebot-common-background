@@ -6,7 +6,6 @@ import com.highserpot.background.service.BackgroundServiceMP
 import com.highserpot.tf.env.LabelInfo
 import com.highserpot.tf.tflite.Classifier
 import java.util.*
-import kotlin.collections.ArrayList
 
 /*
         1. 클릭대상 선정은? ==> 클릭대상목록 만들기, 유효한 객체들
@@ -110,7 +109,10 @@ class Target {
                 if (no_action != this.detections.get(0).lb.getString("action") && d_click) {
                     this.detections.get(0).click = d_click
                     //분해카운터
-                    if (LabelInfo.forced_key.contains(first_id)) {
+                    if (LabelInfo.forced_key.contains(first_id) && LabelInfo.count_id.contains(
+                            first_id
+                        )
+                    ) {
                         BackgroundServiceMP.disassembly_counter++
                         Log.d("disassembly_counter", "${BackgroundServiceMP.disassembly_counter}")
                     }
@@ -126,26 +128,39 @@ class Target {
     }
 
     private fun select_one(): Int? {
-        var first_id: Int?;
-        val select_regex = select_one_by_regex()
-        first_id = if (select_regex.isEmpty()) {
-
-            var id = select_one_by_other()
-            txt += "select_one_by_other=${id},"
-            if (id == null && valid_id.size > 0) {
-                id = valid_id[0]
-            }
-            id
+        var first_id: Int? = if (valid_id.size > 0) {
+            valid_id[0]
         } else {
-            txt += "select_regex=${select_regex[0]},"
-            select_regex[0]
+            null
         }
+
+        val select_regex = select_one_by_regex()
+        /*
+        history_forced.size < 1
+            느린디바이스에서 클릭안될 확률이 있음 테스트필요.
+         */
+
+        if (history_forced.isEmpty() && history_forced.size < 1) {
+            first_id = if (select_regex.isEmpty()) {
+
+                val id = select_one_by_other()
+                txt += "select_one_by_other= ${id},"
+                id ?: first_id
+
+            } else {
+                txt += "select_regex= ${select_regex[0]},"
+                select_regex[0]
+            }
+        } else {
+            txt += "history_forced.size= ${history_forced.size},"
+        }
+
         val forced_first_id = select_forced()
         if (forced_first_id != null) {
-            txt += "forced_first_id=${forced_first_id},"
+            txt += "forced_first_id= ${forced_first_id},"
             first_id = forced_first_id
         } else {
-            txt += "forced_first_id=null,"
+            txt += "forced_first_id= null,"
         }
         save_forced(first_id)
         return first_id
@@ -183,7 +198,12 @@ class Target {
     fun select_one_by_height() {}
     fun select_forced(): Int? {
         if (FORCED_SELECT) {
-            val select_standard_time = start_time - processing_time * (processing_cnt + 1) * 100
+            /*
+            sk2:
+                애뮬: select_standard_time = start_time - processing_time * (processing_cnt + 1)
+
+            */
+            val select_standard_time = start_time - processing_time * (processing_cnt + 1)
             history_forced = history_forced.filterKeys { it > select_standard_time }
                 .toSortedMap(reverseOrder())
             var first_id: Int? =
